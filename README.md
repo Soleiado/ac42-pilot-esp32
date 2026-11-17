@@ -332,8 +332,19 @@ NFU, les réglages et le diagnostic.
 - Langage : Kotlin + Jetpack Compose.
 - Connexion : API REST du boîtier, HTTP local.
 - Adresse par défaut : `http://192.168.4.1`, modifiable dans l’application.
-- APK : `android/app/build/outputs/apk/debug/app-debug.apk`.
 - Compilation Android validée et tests de parsing JSON : 3/3.
+
+### Télécharger l’APK
+
+[**⬇ Télécharger l’APK Android v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
+
+- APK signé avec la clé de développement Android, à installer manuellement
+  (autoriser les sources inconnues), pas via le Play Store.
+- `minSdk 26`, `targetSdk 34`, environ 9,6 Mo.
+- SHA-256 : `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
+- Toutes les versions : [page Releases](https://github.com/Soleiado/ac42-pilot-esp32/releases).
+
+Le build local reste possible :
 
 ```powershell
 cd android
