@@ -1,8 +1,9 @@
 # AC42 Pilot — interface web pour pilote Simrad AC42
 
-Firmware pour la carte **Waveshare ESP32-S3-RS485-CAN** qui expose une
-interface web mobile pour contrôler un pilote automatique **Simrad AC42** sur
-un bus **NMEA 2000**.
+Firmware pour le module
+[**Waveshare ESP32-S3-RS485-CAN**](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
+qui expose une interface web mobile pour contrôler un pilote automatique
+**Simrad AC42** sur un bus **NMEA 2000**.
 
 Le projet s'inspire du plugin Signal K
 [`signalk-ac42-autopilot`](https://github.com/CaptnOliv/signalk-ac42-autopilot)
@@ -106,8 +107,11 @@ actif sur le bus, les commandes sont refusées par l'AC42.
 
 ## Matériel
 
-- [Waveshare ESP32-S3-RS485-CAN](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
-  (SKU 32154 ou 34781 pour la version antenne externe).
+Le projet utilise le module
+[**Waveshare ESP32-S3-RS485-CAN**](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
+(SKU 32154, ou 34781 pour la version à antenne externe). C'est ce module qui est
+ciblé par `platformio.ini` et par le brochage ci-dessous.
+
 - Alimentation 7–36 V sur le bornier, ou USB-C 5 V pour le développement.
 - Connexion CAN H / CAN L au backbone NMEA 2000.
 - Terminaison 120 Ω aux deux extrémités du backbone. Le jumper 120 Ω de la

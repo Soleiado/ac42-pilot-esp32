@@ -2,8 +2,10 @@
 
 ## Carte
 
-Le firmware cible la carte **Waveshare ESP32-S3-RS485-CAN** (SKU 32154) ou sa
-variante à antenne externe **ESP32-S3-RS485-CAN-U** (SKU 34781).
+Le firmware cible le module
+[**Waveshare ESP32-S3-RS485-CAN**](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
+(SKU 32154) ou sa variante à antenne externe **ESP32-S3-RS485-CAN-U**
+(SKU 34781).
 
 Caractéristiques utiles :
 
