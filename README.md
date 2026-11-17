@@ -1,139 +1,142 @@
-# AC42 Pilot — interface web pour pilote Simrad AC42
+# AC42 Pilot — web interface for the Simrad AC42 autopilot
 
-Firmware pour le module
+**English** · [Français](README.fr.md) · [Español](README.es.md)
+
+Firmware for the
 [**Waveshare ESP32-S3-RS485-CAN**](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
-qui expose une interface web mobile pour contrôler un pilote automatique
-**Simrad AC42** sur un bus **NMEA 2000**.
+module that exposes a mobile web interface to control a **Simrad AC42**
+autopilot on a **NMEA 2000** bus.
 
-Le projet s'inspire du plugin Signal K
+The project is inspired by the Signal K plugin
 [`signalk-ac42-autopilot`](https://github.com/CaptnOliv/signalk-ac42-autopilot)
-pour l'interface et pour le protocole Simnet, mais il fonctionne de manière
-autonome : pas de Signal K, pas de serveur, pas d'ordinateur de bord. La carte
-se connecte directement au bus NMEA 2000 et démarre en point d'accès Wi-Fi.
-Un réseau local (STA) peut être configuré depuis la page de réglages ; si ce
-réseau devient inaccessible, l'AP de secours est réactivé automatiquement.
+for both the interface and the Simnet protocol, but it runs standalone: no
+Signal K, no server, no onboard computer. The board connects directly to the
+NMEA 2000 bus and starts a Wi-Fi access point. A local network (STA) can be
+configured from the settings page; if that network becomes unreachable, the
+fallback AP is re-enabled automatically.
 
-![Interface web AC42 Pilot — vue desktop](docs/screenshot-desktop.png)
+![AC42 Pilot web interface — desktop view](docs/screenshot-desktop.png)
 
-Interface web en **vue desktop** (1280 px). Interface mobile (390 px) :
+Desktop web interface (1280 px). Mobile interface (390 px):
 [docs/screenshot-mobile.png](docs/screenshot-mobile.png).
 
-Page de réglages réseau : [docs/screenshot-settings.png](docs/screenshot-settings.png).
+Network settings page: [docs/screenshot-settings.png](docs/screenshot-settings.png).
+
+> The detailed protocol, wiring and API documents are currently in French.
 
 ## Inspiration
 
-Le firmware, l’interface web et l’application Android sont **inspirés du plugin
-SignalK [`signalk-ac42-autopilot`](https://github.com/CaptnOliv/signalk-ac42-autopilot)**,
-qui contrôle un AC42 depuis Signal K. Ce projet reprend :
+The firmware, web interface and Android app are **inspired by the SignalK
+plugin [`signalk-ac42-autopilot`](https://github.com/CaptnOliv/signalk-ac42-autopilot)**,
+which controls an AC42 from Signal K. This project reuses:
 
-- la présentation et l’ergonomie de l’interface web (compas, modes, corrections,
-  virement long, barre directe NFU, réglages) ;
-- les trames Simnet PGN 130850 et 130845, les événements de commande et les
-  directions validées sur un AC42 réel ;
-- la détection du contrôleur B&G actif et l’émission des commandes avec son
-  adresse source NMEA 2000.
+- the layout and ergonomics of the web interface (compass, modes, course
+  changes, long-press tack, direct NFU rudder control, settings);
+- the Simnet PGN 130850 and 130845 frames, command events and directions
+  validated on a real AC42;
+- active B&G controller detection and command transmission using its NMEA 2000
+  source address.
 
-La différence principale est l’architecture : ici, tout est embarqué sur la
-carte ESP32-S3, sans Signal K, sans `canboat` et sans ordinateur de bord. Le
-plugin `signalk-ac42-autopilot` reste la référence du protocole et la source
-d’inspiration de ce projet. Ce projet n’est ni affilié ni approuvé par Signal K
-ou par l’auteur du plugin.
+The main difference is the architecture: here everything runs on the ESP32-S3
+board, without Signal K, without `canboat` and without an onboard computer. The
+`signalk-ac42-autopilot` plugin remains the protocol reference and the
+inspiration for this project. This project is neither affiliated with nor
+endorsed by Signal K or by the plugin author.
 
-## Réalisation — vibe coding
+## Built with vibe coding
 
-Ce projet a été réalisé en **« vibe coding »** : le firmware ESP32, l’interface
-web embarquée, l’application Android, la documentation et les tests ont été
-écrits en dialogue avec une IA, à partir d’objectifs et de retours humains.
+This project was built through **“vibe coding”**: the ESP32 firmware, embedded
+web interface, Android app, documentation and tests were written in dialogue
+with an AI, starting from human goals and feedback.
 
-- **Outil** : [OpenCode](https://opencode.ai), agent de développement en ligne
-  de commande.
-- **Modèle** : **DeepSeek** (DeepSeek V4.1 Flash).
+- **Tool**: [OpenCode](https://opencode.ai), a command-line development agent.
+- **Model**: **DeepSeek** (DeepSeek V4.1 Flash).
 
-Le protocole AC42/Simnet n’a pas été inventé : il provient du plugin
-`signalk-ac42-autopilot` et des essais sur le matériel. Le « vibe coding » a
-accéléré l’écriture du code, pas remplacé la vérification — la mise en service
-reste à faire à quai, avec les précautions ci-dessous.
+The AC42/Simnet protocol was not invented: it comes from the
+`signalk-ac42-autopilot` plugin and from tests on real hardware. Vibe coding
+sped up writing the code; it did not replace verification — commissioning must
+still be done at the dock, with the precautions below.
 
-## Avertissement — sécurité
+## Safety warning
 
-**Ce projet envoie de vraies commandes à un pilote automatique.** Il n'est ni
-certifié, ni validé par Simrad/Navico. Une erreur de câblage, de protocole ou
-d'utilisation peut provoquer un mouvement de barre inattendu.
+**This project sends real commands to an autopilot.** It is neither certified
+nor approved by Simrad/Navico. A wiring, protocol or usage mistake can cause
+unexpected rudder movement.
 
-- Essayez d'abord **à quai**, barre dégagée, avec quelqu'un prêt à passer en
-  standby.
-- Gardez toujours une veille humaine et un moyen d'arrêter le pilote.
-- Ne vous reposez jamais sur cette interface pour la sécurité du navire.
-- Vérifiez que l'injection de trames sur votre bus NMEA 2000 est autorisée et
-  adaptée à votre installation.
+- Test **at the dock first**, with the rudder clear and someone ready to switch
+  to standby.
+- Always keep a human watch and a way to stop the autopilot.
+- Never rely on this interface for vessel safety.
+- Check that frame injection on your NMEA 2000 bus is allowed and suitable for
+  your installation.
 
-L'AC42 n'accepte les commandes PGN 130850 que si elles portent **l'adresse
-source d'un contrôleur B&G/Simrad actif** (pupitre, MFD, Triton…) qui émet son
-heartbeat PGN 65305. Le firmware détecte ce contrôleur et émet les commandes
-avec son adresse source, exactement comme le plugin Signal K. Sans contrôleur
-actif sur le bus, les commandes sont refusées par l'AC42.
+The AC42 only accepts PGN 130850 commands if they carry **the source address of
+an active B&G/Simrad controller** (control head, MFD, Triton…) that transmits
+its PGN 65305 heartbeat. The firmware detects that controller and sends
+commands with its source address, exactly like the Signal K plugin. Without an
+active controller on the bus, the AC42 rejects the commands.
 
-## État du projet
+## Project status
 
-- Firmware compilé avec PlatformIO 8.0.0 / Arduino ESP32 3.3.12.
-- Tests de trames NMEA 2000 : 60 vérifications, toutes passées.
-- Interface web testée sur desktop et mobile (390 px) avec le serveur de
-  démonstration.
-- Application Android compilée (APK debug) et tests de parsing JSON : 3/3.
-- **Pas encore validé sur un AC42 réel avec cette carte** : le protocole est
-  issu du plugin `signalk-ac42-autopilot`, validé sur un AC42, mais la mise en
-  service doit être faite à quai.
+- Firmware built with PlatformIO 8.0.0 / Arduino ESP32 3.3.12.
+- NMEA 2000 frame tests: 60 checks, all passing.
+- Web interface tested on desktop and mobile (390 px) with the demo server.
+- Android app built (debug APK) and JSON parsing tests: 3/3.
+- **Not yet validated on a real AC42 with this board**: the protocol comes from
+  the `signalk-ac42-autopilot` plugin, which was validated on an AC42, but
+  commissioning must be done at the dock.
 
-## Fonctionnalités
+## Features
 
-- Interface web embarquée, responsive, en français, sans dépendance externe.
-- Modes **Standby**, **Auto** (maintien de cap), **Vent** (angle apparent).
-- Corrections de cap **±1°** et **±10°**, avec sens adapté au mode.
-- **Virement** bâbord/tribord par appui long de 2 s.
-- **Barre directe NFU** en standby : appui maintenu, keepalive 300 ms,
-  arrêt automatique par watchdog (délai configurable, plafond 8 s).
-- Jeu de paramètres de barre **LO / HI / AUTO** et niveau de réponse 1–10 lu
-  sur le PGN 130845.
-- Détection automatique de l'adresse du contrôleur B&G et de l'AC42 ; adresses
-  forçables depuis l'interface.
-- Compas, cible, vent apparent/vrai, SOG, COG, barre, profondeur selon les PGN
-  disponibles sur le bus.
-- Diagnostic : état CAN, adresses N2K, compteurs, journal, avertissements.
-- Wi-Fi **AP par défaut**, réseau STA configurable via la page de réglages,
-  **AP de secours automatique**, mDNS `ac42-pilot.local`, réglages persistants
-  en NVS.
-- Serveur de démonstration PC pour travailler l'interface sans matériel.
-- Tests de trames NMEA 2000 exécutables sur PC.
+- Embedded responsive web interface, in French, with no external dependency.
+- **Standby**, **Auto** (heading hold) and **Wind** (apparent angle) modes.
+- Heading changes of **±1°** and **±10°**, with the direction adapted to the
+  mode.
+- Port/starboard **tack** via a 2-second long press.
+- **Direct NFU rudder control** in standby: held press, 300 ms keepalive,
+  automatic stop through a watchdog (configurable delay, 8 s maximum).
+- Rudder response profile **LO / HI / AUTO** and response level 1–10 read from
+  PGN 130845.
+- Automatic detection of the B&G controller and AC42 addresses; addresses can
+  be forced from the interface.
+- Compass, target, apparent/true wind, SOG, COG, rudder and depth depending on
+  the PGNs available on the bus.
+- Diagnostics: CAN state, N2K addresses, counters, log, warnings.
+- **AP by default**, STA network configurable from the settings page,
+  **automatic fallback AP**, mDNS `ac42-pilot.local`, settings persisted in
+  NVS.
+- PC demo server to work on the interface without hardware.
+- NMEA 2000 frame tests runnable on a PC.
 
-## Matériel
+## Hardware
 
-Le projet utilise le module
+The project uses the
 [**Waveshare ESP32-S3-RS485-CAN**](https://www.waveshare.com/product/esp32-related/boards-kits/esp32-s3/esp32-s3-rs485-can.htm)
-(SKU 32154, ou 34781 pour la version à antenne externe). C'est ce module qui est
-ciblé par `platformio.ini` et par le brochage ci-dessous.
+module (SKU 32154, or 34781 for the external-antenna version). This is the
+module targeted by `platformio.ini` and by the pinout below.
 
-- Alimentation 7–36 V sur le bornier, ou USB-C 5 V pour le développement.
-- Connexion CAN H / CAN L au backbone NMEA 2000.
-- Terminaison 120 Ω aux deux extrémités du backbone. Le jumper 120 Ω de la
-  carte ne doit être fermé que si la carte est en extrémité de bus.
-- Un contrôleur/pupitre B&G ou Simrad actif sur le même bus.
+- 7–36 V power on the terminal block, or 5 V USB-C for development.
+- CAN H / CAN L connection to the NMEA 2000 backbone.
+- 120 Ω termination at both ends of the backbone. The board's 120 Ω jumper must
+  only be closed when the board is at the end of the bus.
+- An active B&G or Simrad controller/control head on the same bus.
 
-Brochage utilisé :
+Pinout used:
 
 | Signal | GPIO |
 |---|---|
 | CAN TX | 15 |
 | CAN RX | 16 |
-| RS485 TX (non utilisé) | 17 |
-| RS485 RX (non utilisé) | 18 |
-| RS485 DIR (non utilisé) | 21 |
-| RTC SDA/SCL (non utilisé) | 39 / 38 |
+| RS485 TX (not used) | 17 |
+| RS485 RX (not used) | 18 |
+| RS485 DIR (not used) | 21 |
+| RTC SDA/SCL (not used) | 39 / 38 |
 
-Voir [docs/WIRING.md](docs/WIRING.md) pour le câblage et les précautions.
+See [docs/WIRING.md](docs/WIRING.md) (in French) for wiring and precautions.
 
-## Compilation et flash
+## Build and flash
 
-Prérequis : [PlatformIO](https://platformio.org/) (VS Code ou CLI).
+Prerequisites: [PlatformIO](https://platformio.org/) (VS Code or CLI).
 
 ```bash
 pio run
@@ -141,162 +144,160 @@ pio run -t upload
 pio device monitor
 ```
 
-Le projet utilise :
+The project uses:
 
-- PlatformIO `espressif32@8.0.0` ;
-- framework Arduino ESP32 3.x ;
-- ArduinoJson 7 ;
-- carte cible `esp32-s3-devkitc-1`, flash 16 MB, partition usine de 3 MB ;
-- USB CDC activé au démarrage (`ARDUINO_USB_CDC_ON_BOOT=1`) pour le moniteur
-  série sur le port USB-C.
+- PlatformIO `espressif32@8.0.0`;
+- Arduino ESP32 3.x framework;
+- ArduinoJson 7;
+- target board `esp32-s3-devkitc-1`, 16 MB flash, 3 MB application partition;
+- USB CDC enabled at boot (`ARDUINO_USB_CDC_ON_BOOT=1`) for the serial monitor
+  on the USB-C port.
 
-Si la carte n'est pas détectée, maintenir **BOOT**, appuyer sur **RESET**,
-relâcher **BOOT**, puis relancer l'upload. Le port série est à 115200 bauds.
-Si l'upload à 921600 bauds échoue, réduire `upload_speed` à `460800` dans
-`platformio.ini`.
+If the board is not detected, hold **BOOT**, press **RESET**, release **BOOT**,
+then start the upload again. The serial port runs at 115200 baud. If uploading
+at 921600 baud fails, lower `upload_speed` to `460800` in `platformio.ini`.
 
-Après compilation, la mémoire utilisée est d'environ **1,06 Mo de flash** et
-**58 Ko de RAM** (hors piles Wi-Fi), ce qui laisse de la marge dans la
-partition de 3 Mo.
+After building, memory usage is about **1.06 MB of flash** and **58 KB of RAM**
+(excluding Wi-Fi stacks), leaving headroom in the 3 MB partition.
 
 ## Wi-Fi
 
-**Aucun réseau local n'est configuré en usine.** Au démarrage :
+**No local network is configured at the factory.** At boot:
 
-- si un SSID STA a été enregistré et est accessible, la carte s'y connecte ;
-- si le SSID STA est vide, l'AP démarre immédiatement ;
-- si un SSID STA est configuré mais inaccessible, l'AP de secours démarre
-  après environ **15 secondes** ;
-- si la carte était connectée puis perd le réseau, l'AP de secours démarre
-  après environ 10 secondes ;
-- une fois l'AP actif, il reste disponible même si le STA se reconnecte
-  (mode AP+STA) jusqu'au prochain redémarrage.
+- if a STA SSID has been saved and is reachable, the board connects to it;
+- if the STA SSID is empty, the AP starts immediately;
+- if a STA SSID is configured but unreachable, the fallback AP starts after
+  about **15 seconds**;
+- if the board was connected and then loses the network, the fallback AP starts
+  after about 10 seconds;
+- once the AP is active, it remains available even if the STA reconnects
+  (AP+STA mode) until the next reboot.
 
-Valeurs par défaut de l'AP :
+AP defaults:
 
-| Paramètre | Valeur |
+| Parameter | Value |
 |---|---|
-| SSID | **`AC42-Pilot-XXXX`** (suffixe MAC) |
-| Mot de passe | **`ac42pilot`** |
-| Adresse | **192.168.4.1** |
+| SSID | **`AC42-Pilot-XXXX`** (MAC suffix) |
+| Password | **`ac42pilot`** |
+| Address | **192.168.4.1** |
 
-L'ESP32-S3 est **2,4 GHz uniquement**. Un réseau local configuré en 5 GHz seul
-ne pourra pas être rejoint et déclenchera l'AP de secours.
+The ESP32-S3 is **2.4 GHz only**. A local network configured on 5 GHz only
+cannot be joined and will trigger the fallback AP.
 
-> Changez le mot de passe AP par défaut dans la page de réglages.
+> Change the default AP password on the settings page.
 
-> **Mise à jour depuis la version précédente** : l'ancien réseau STA
-> éventuellement mémorisé est effacé. L'AP démarre, puis le réseau peut être
-> reconfiguré dans la page de réglages.
+> **Upgrading from the previous version**: any previously stored STA network is
+> erased. The AP starts, then the network can be configured again on the
+> settings page.
 
-## Premier démarrage
+## First start
 
-1. Alimenter la carte.
-2. Se connecter au Wi-Fi **`AC42-Pilot-XXXX`** avec le mot de passe
-   **`ac42pilot`**.
-3. Ouvrir **http://192.168.4.1/**.
-4. Aller dans **Réglages** pour configurer un réseau local (STA), le mot de
-   passe AP, le nom d'hôte ou les adresses N2K.
-5. Cliquer sur **Enregistrer**. Si l'interface indique qu'un redémarrage est
-   nécessaire, cliquer sur **Redémarrer**.
-6. Après redémarrage :
-   - si le réseau STA est accessible, la carte s'y connecte et l'IP apparaît
-     dans le moniteur série ;
-   - sinon, l'AP de secours redémarre après environ 15 secondes.
-7. Pour revenir à l'AP seul, vider le SSID STA dans les réglages.
+1. Power the board.
+2. Connect to the **`AC42-Pilot-XXXX`** Wi-Fi network with the
+   **`ac42pilot`** password.
+3. Open **http://192.168.4.1/**.
+4. Go to **Réglages** (Settings) to configure a local network (STA), the AP
+   password, the hostname or the N2K addresses.
+5. Click **Enregistrer** (Save). If the interface says a reboot is required,
+   click **Redémarrer** (Reboot).
+6. After the reboot:
+   - if the STA network is reachable, the board connects to it and its IP
+     appears in the serial monitor;
+   - otherwise, the fallback AP starts again after about 15 seconds.
+7. To return to AP-only mode, clear the STA SSID in the settings.
 
-Le changement de SSID, de mot de passe ou de nom d'hôte enregistre les
-paramètres puis demande un redémarrage explicite : l'interface affiche le
-résultat de l'enregistrement et ne coupe pas la connexion toute seule.
+Changing the SSID, password or hostname saves the settings and then requires an
+explicit reboot: the interface shows the save result and does not drop the
+connection by itself.
 
-### Page de réglages
+### Settings page
 
-- **Enregistrer** affiche le résultat dans la page (succès ou erreur exacte).
-- Un changement réseau (SSID, mot de passe, nom d'hôte) est enregistré puis
-  appliqué après un clic sur **Redémarrer**.
-- Une erreur de validation ou d'écriture NVS est affichée dans la page ; le
-  détail est aussi écrit dans le journal (`/api/log`) et dans le moniteur
-  série :
+- **Enregistrer** (Save) shows the result on the page (success or the exact
+  error).
+- A network change (SSID, password, hostname) is saved and then applied after
+  clicking **Redémarrer** (Reboot).
+- A validation or NVS write error is shown on the page; the detail is also
+  written to the log (`/api/log`) and to the serial monitor. Firmware log
+  messages are in French:
   ```text
   Réglages: POST reçu (… octets, type 'application/json')
   Réglages enregistrés
   ```
-  ou
+  or
   ```text
   Réglages refusés: <motif>
   ```
 
-## Adresse IP dans le moniteur série
+## IP address in the serial monitor
 
-L'adresse IP de la carte est affichée au démarrage et rappelée toutes les
-60 secondes environ :
+The board's IP address is printed at boot and repeated about every 60 seconds:
 
 ```text
 Wi-Fi AP: IP 192.168.4.1 - http://192.168.4.1/
 Wi-Fi STA: IP 192.168.1.42 - http://192.168.1.42/ (RSSI -52 dBm)
 ```
 
-Commande :
+Command:
 
 ```bash
 pio device monitor
 ```
 
-Si l'AP et le STA sont actifs, les deux adresses sont affichées.
+If both AP and STA are active, both addresses are printed.
 
-## Utilisation
+## Usage
 
-- **Standby / Auto / Vent** : envoie le changement de mode à l'AC42.
-- **−1° / +1° / −10° / +10°** : correction de cap en Auto, correction d'angle
-  au vent en Vent. Les commandes sont ignorées/inhibées en standby.
-- **Virement** : maintenir le bouton 2 secondes ; la barre de progression
-  évite les déclenchements accidentels.
-- **Barre directe** : en standby, les boutons ±10° deviennent `BARRE BÂBORD`
-  et `BARRE TRIBORD`. Maintenir le doigt fait bouger la barre ; relâcher
-  envoie `stop`. Le firmware arrête aussi la barre si le keepalive disparaît
-  ou après 8 secondes.
-- **Réponse** : appuyer sur la tuile pour cycler AUTO → LO → HI → AUTO.
-- **Réglages** : Wi-Fi, adresses N2K, délai de sécurité barre, diagnostic et
-  journal.
+- **STANDBY / AUTO / VENT** (Wind): sends the mode change to the AC42.
+- **−1° / +1° / −10° / +10°**: heading change in Auto, wind-angle change in
+  Wind. Commands are ignored/inhibited in standby.
+- **Tack**: hold the button for 2 seconds; the progress bar prevents accidental
+  triggers.
+- **Direct rudder**: in standby, the ±10° buttons become `BARRE BÂBORD` (port
+  rudder) and `BARRE TRIBORD` (starboard rudder). Holding your finger moves the
+  rudder; releasing sends `stop`. The firmware also stops the rudder if the
+  keepalive disappears or after 8 seconds.
+- **Response**: tap the tile to cycle AUTO → LO → HI → AUTO.
+- **Réglages** (Settings): Wi-Fi, N2K addresses, rudder safety timeout,
+  diagnostics and log.
 
-Les boutons sont désactivés tant qu'aucun heartbeat de contrôleur n'est
-détecté, car l'AC42 refuserait les commandes. L'adresse de l'AC42 est détectée
-automatiquement ; à défaut, la cible 0x02 est utilisée et signalée.
+Buttons are disabled until a controller heartbeat is detected, because the AC42
+would reject commands. The AC42 address is detected automatically; if not
+found, target 0x02 is used and flagged.
 
 ## Architecture
 
 ```text
 src/
-  main.cpp                 initialisation et boucle principale
+  main.cpp                 initialization and main loop
   protocol/
-    n2k_codec.c/.h         identifiants 29 bits, fast-packet
-    ac42_protocol.c/.h     décodage PGN, construction des trames, état
-  n2k_bus.cpp/.h           pilote TWAI 250 kbit/s, réception, bus-off
-  ac42_controller.cpp/.h   adresses, commandes, sécurité NFU, niveaux
+    n2k_codec.c/.h         29-bit identifiers, fast-packet
+    ac42_protocol.c/.h     PGN decoding, frame building, state
+  n2k_bus.cpp/.h           TWAI driver 250 kbit/s, reception, bus-off
+  ac42_controller.cpp/.h   addresses, commands, NFU safety, levels
   wifi_manager.cpp/.h      AP+STA, mDNS
-  web_server.cpp/.h        REST, réglages, journal, UI embarquée
+  web_server.cpp/.h        REST, settings, log, embedded UI
   app_config.cpp/.h        NVS
-  app_log.cpp/.h           journal circulaire
-  web/index.html           interface web (un seul fichier)
-tests/test_protocol.c      tests hôtes du protocole
-tools/mock_server.py       serveur de démonstration de l’UI
-android/                   application Android native (Kotlin/Compose)
-docs/                      protocole, câblage, API
+  app_log.cpp/.h           circular log
+  web/index.html           web interface (single file)
+tests/test_protocol.c      host-side protocol tests
+tools/mock_server.py       UI demo server
+android/                   native Android app (Kotlin/Compose)
+docs/                      protocol, wiring, API
 ```
 
-Le cœur protocole est du **C pur**, sans dépendance Arduino/ESP32. Il est donc
-testable sur PC.
+The protocol core is **pure C**, with no Arduino/ESP32 dependency. It can
+therefore be tested on a PC.
 
-## Tests du protocole
+## Protocol tests
 
-Sous Linux, macOS ou WSL :
+On Linux, macOS or WSL:
 
 ```bash
 cd tests
 ./run_tests.sh
 ```
 
-Ou manuellement :
+Or manually:
 
 ```bash
 gcc -std=c11 -Wall -Wextra -O2 -Iinclude \
@@ -305,46 +306,46 @@ gcc -std=c11 -Wall -Wextra -O2 -Iinclude \
 ./tests/test_protocol
 ```
 
-Les tests vérifient notamment les trames PGN 130850 octet par octet (modes,
-corrections, virement, barre, réponse), la requête PGN 130845, la
-réassemblage fast-packet et le décodage des PGN 65305/65340/65341/127237/
-127250/130306/129026/127245.
+The tests check, among other things, PGN 130850 frames byte by byte (modes,
+course changes, tack, rudder, response), the PGN 130845 request, fast-packet
+reassembly and decoding of PGNs 65305/65340/65341/127237/127250/130306/129026/
+127245.
 
-## Serveur de démonstration
+## Demo server
 
-Pour modifier l'interface sans carte :
+To modify the interface without a board:
 
 ```bash
 python tools/mock_server.py --port 8090
 ```
 
-Puis ouvrir http://127.0.0.1:8090/. Le serveur simule les modes, les
-instruments, les corrections, le virement et la barre directe. Il est marqué
-**MODE DÉMO** dans l'interface et n'envoie aucune trame réelle.
+Then open http://127.0.0.1:8090/. The server simulates modes, instruments,
+course changes, tacks and direct rudder control. It is marked **MODE DÉMO** in
+the interface and sends no real frames.
 
-## Application Android
+## Android app
 
-Un sous-projet Android natif se trouve dans [`android/`](android/README.md).
-Il reprend l’interface et les commandes de la page web, avec un compas, les
-modes Auto/Vent/Standby, les corrections, le virement long, la barre directe
-NFU, les réglages et le diagnostic.
+A native Android sub-project lives in [`android/`](android/README.md)
+(documentation in French). It reproduces the web page's interface and commands,
+with a compass, Auto/Wind/Standby modes, course changes, long-press tack,
+direct NFU rudder control, settings and diagnostics.
 
-- Langage : Kotlin + Jetpack Compose.
-- Connexion : API REST du boîtier, HTTP local.
-- Adresse par défaut : `http://192.168.4.1`, modifiable dans l’application.
-- Compilation Android validée et tests de parsing JSON : 3/3.
+- Language: Kotlin + Jetpack Compose.
+- Connection: board REST API over local HTTP.
+- Default address: `http://192.168.4.1`, editable in the app.
+- Android build validated and JSON parsing tests: 3/3.
 
-### Télécharger l’APK
+### Download the APK
 
-[**⬇ Télécharger l’APK Android v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
+[**⬇ Download the Android APK v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
 
-- APK signé avec la clé de développement Android, à installer manuellement
-  (autoriser les sources inconnues), pas via le Play Store.
-- `minSdk 26`, `targetSdk 34`, environ 9,6 Mo.
-- SHA-256 : `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
-- Toutes les versions : [page Releases](https://github.com/Soleiado/ac42-pilot-esp32/releases).
+- APK signed with the Android debug key, to install manually (allow unknown
+  sources), not through the Play Store.
+- `minSdk 26`, `targetSdk 34`, about 9.6 MB.
+- SHA-256: `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
+- All versions: [Releases page](https://github.com/Soleiado/ac42-pilot-esp32/releases).
 
-Le build local reste possible :
+A local build is still possible:
 
 ```powershell
 cd android
@@ -352,9 +353,10 @@ $env:JAVA_HOME = 'C:\Program Files\Eclipse Adoptium\jdk-21.0.13.9-hotspot'
 .\gradlew.bat :app:assembleDebug
 ```
 
-## API REST
+## REST API
 
-Les endpoints sont documentés dans [docs/API.md](docs/API.md). Exemples :
+The endpoints are documented in [docs/API.md](docs/API.md) (in French).
+Examples:
 
 ```bash
 curl http://192.168.4.1/api/status
@@ -364,39 +366,38 @@ curl -X POST http://192.168.4.1/api/course \
   -H 'Content-Type: application/json' -d '{"side":"stbd","deg":1}'
 ```
 
-## Protocole
+## Protocol
 
-Les détails des PGN, des octets de commande, du mode bitfield et de la
-nécessité d'utiliser l'adresse source du contrôleur sont dans
-[docs/PROTOCOL.md](docs/PROTOCOL.md).
+Details on the PGNs, command bytes, bitfield mode and the need to use the
+controller source address are in [docs/PROTOCOL.md](docs/PROTOCOL.md)
+(in French).
 
-## Limites connues
+## Known limitations
 
-- **Nav** n'est pas implémenté : le mode est affiché, mais les corrections et
-  virements sont désactivés.
-- Confirmé sur AC42. Les NAC-2/NAC-3/AC12 sont probablement compatibles mais
-  n'ont pas été testés ici.
-- Le vent vrai (TWA/TWS) n'est affiché que si le bus fournit un PGN 130306
-  true/water referenced ou une direction de vent vraie exploitable ; avec un
-  capteur apparent seul, seuls AWA/AWS sont disponibles.
-- Le firmware n'émet pas d'Address Claim NMEA 2000 : il injecte les trames de
-  commande avec l'adresse du contrôleur actif, comme le plugin d'origine.
-- Pas d'authentification HTTP : protégez le Wi-Fi et n'exposez pas la carte
-  sur un réseau non maîtrisé.
-- RS485 et RTC de la carte ne sont pas utilisés dans cette version.
-- Pas d'OTA ni de persistance des journaux/historiques.
-- L'historique de cap de l'interface est côté navigateur (60 s).
+- **Nav** is not implemented: the mode is displayed, but course changes and
+  tacks are disabled.
+- Confirmed on AC42. NAC-2/NAC-3/AC12 are probably compatible but have not been
+  tested here.
+- True wind (TWA/TWS) is only displayed if the bus provides a
+  true/water-referenced PGN 130306 or a usable true wind direction; with an
+  apparent-only sensor, only AWA/AWS are available.
+- The firmware does not send an NMEA 2000 Address Claim: it injects command
+  frames with the active controller's address, like the original plugin.
+- No HTTP authentication: protect the Wi-Fi and do not expose the board on an
+  untrusted network.
+- The board's RS485 and RTC are not used in this version.
+- No OTA and no log/history persistence.
+- The interface's heading history is kept in the browser (60 s).
 
-## Crédits et licence
+## Credits and license
 
-- Protocole AC42/Simnet : reverse engineering du plugin
+- AC42/Simnet protocol: reverse engineering of the
   [`signalk-ac42-autopilot`](https://github.com/CaptnOliv/signalk-ac42-autopilot)
-  (Apache-2.0).
-- Définitions PGN : [canboat](https://github.com/canboat/canboat)
-  (Apache-2.0).
-- Carte et brochage : documentation Waveshare ESP32-S3-RS485-CAN.
-- Réalisation : **vibe coding** avec **OpenCode** et **DeepSeek**.
+  plugin (Apache-2.0).
+- PGN definitions: [canboat](https://github.com/canboat/canboat) (Apache-2.0).
+- Board and pinout: Waveshare ESP32-S3-RS485-CAN documentation.
+- Built with **vibe coding** using **OpenCode** and **DeepSeek**.
 
-Le code de ce dépôt est publié sous licence MIT — voir [LICENSE](LICENSE).
-Les informations de protocole provenant de projets tiers restent soumises à
-leurs licences respectives.
+The code in this repository is released under the MIT license — see
+[LICENSE](LICENSE). Protocol information from third-party projects remains
+subject to their respective licenses.
