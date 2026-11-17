@@ -12,9 +12,10 @@ se connecte directement au bus NMEA 2000 et démarre en point d'accès Wi-Fi.
 Un réseau local (STA) peut être configuré depuis la page de réglages ; si ce
 réseau devient inaccessible, l'AP de secours est réactivé automatiquement.
 
-![Interface AC42 Pilot](docs/screenshot-desktop.jpg)
+![Interface web AC42 Pilot — vue desktop](docs/screenshot-desktop.png)
 
-Interface mobile (390 px) : [docs/screenshot-mobile.png](docs/screenshot-mobile.png).
+Interface web en **vue desktop** (1280 px). Interface mobile (390 px) :
+[docs/screenshot-mobile.png](docs/screenshot-mobile.png).
 
 Page de réglages réseau : [docs/screenshot-settings.png](docs/screenshot-settings.png).
 
