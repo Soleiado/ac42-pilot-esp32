@@ -1,0 +1,11 @@
+.pio/
+.vscode/
+src/generated/
+.build/
+__pycache__/
+*.pyc
+tests/test_protocol
+tests/test_protocol.exe
+*.bin
+*.elf
+*.map

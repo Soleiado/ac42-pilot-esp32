@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050d12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%2307141b' stroke='%2336d8e8' stroke-width='4'/%3E%3Cpath d='M32 13v19l14 8' fill='none' stroke='%23ffb64a' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23e9f7fb'/%3E%3C/svg%3E">
+<title>AC42 Pilot</title>
+<style>
+  :root {
+    --bg: #050d12;
+    --bg-2: #081821;
+    --panel: #0a1a23;
+    --panel-2: #0e222d;
+    --panel-3: #102a36;
+    --line: #15333f;
+    --line-2: #235566;
+    --text: #e9f7fb;
+    --muted: #6f8f9b;
+    --muted-2: #9ab0b8;
+    --cyan: #36d8e8;
+    --cyan-dim: #0c3d47;
+    --green: #36dd8a;
+    --green-dim: #0b3a25;
+    --red: #ff5a6b;
+    --red-dim: #3d1118;
+    --amber: #ffb64a;
+    --amber-dim: #3e2a0b;
+    --violet: #b08cff;
+    --shadow: 0 18px 55px rgba(0, 0, 0, .38);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { -webkit-touch-callout: none; }
+  html { touch-action: manipulation; }
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+  body {
+    background:
+      radial-gradient(100% 55% at 50% -10%, #0b2430 0%, rgba(5, 13, 18, 0) 60%),
+      radial-gradient(70% 50% at 110% 30%, rgba(17, 66, 78, .28) 0%, rgba(5, 13, 18, 0) 65%),
+      var(--bg);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  button, input { font: inherit; }
+  input { user-select: text; -webkit-user-select: text; }
+  button {
+    color: inherit;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  button:disabled { cursor: not-allowed; }
+  .hidden { display: none !important; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+  #app {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+    padding: calc(env(safe-area-inset-top) + 14px) clamp(12px, 2.5vw, 24px) calc(env(safe-area-inset-bottom) + 16px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .brand-logo {
+    width: 44px; height: 44px; flex: none;
+    border: 1px solid var(--line-2);
+    border-radius: 13px;
+    background: linear-gradient(145deg, #102a35, #08161e);
+    display: grid; place-items: center;
+    box-shadow: 0 0 0 4px rgba(54, 216, 232, .04);
+  }
+  .brand-logo svg { width: 27px; height: 27px; }
+  .brand h1 {
+    margin: 0; font-size: 19px; line-height: 1; letter-spacing: 2.2px; font-weight: 800;
+  }
+  .brand h1 span { color: var(--cyan); font-weight: 600; }
+  .brand p {
+    margin: 5px 0 0; font-size: 11px; letter-spacing: .7px; color: var(--muted);
+    text-transform: uppercase; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;
+  }
+
+  .top-status { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 32px; padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(10, 26, 35, .78);
+    color: var(--muted-2);
+    font-size: 10px; font-weight: 800; letter-spacing: 1.2px;
+    white-space: nowrap;
+  }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex: none; }
+  .chip.ok { border-color: #15583b; color: #a8f3ca; }
+  .chip.ok .dot { background: var(--green); box-shadow: 0 0 9px rgba(54, 221, 138, .8); }
+  .chip.warn { border-color: #5b4215; color: #ffd89c; }
+  .chip.warn .dot { background: var(--amber); box-shadow: 0 0 9px rgba(255, 182, 74, .75); }
+  .chip.off { border-color: #4b1a22; color: #ffacb4; }
+  .chip.off .dot { background: var(--red); box-shadow: 0 0 9px rgba(255, 90, 107, .72); }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    display: grid; place-items: center;
+    color: var(--muted-2);
+    font-size: 19px;
+  }
+  .icon-btn:active { background: var(--panel-2); }
+
+  .badge {
+    align-self: flex-start;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: var(--amber-dim);
+    border: 1px solid #684a13;
+    color: var(--amber);
+    font-size: 10px; font-weight: 900; letter-spacing: 2px;
+  }
+  .banner {
+    border: 1px solid #614414;
+    background: linear-gradient(90deg, rgba(76, 48, 8, .55), rgba(30, 20, 5, .35));
+    color: #ffdca0;
+    border-radius: 13px;
+    padding: 9px 13px;
+    font-size: 12px; line-height: 1.35; font-weight: 600;
+  }
+  .banner.error {
+    border-color: #5d1c25;
+    background: linear-gradient(90deg, rgba(78, 16, 27, .58), rgba(32, 8, 12, .35));
+    color: #ffb0b8;
+  }
+  .banner.info {
+    border-color: #174a57;
+    background: linear-gradient(90deg, rgba(9, 49, 60, .6), rgba(5, 25, 31, .3));
+    color: #a9eef7;
+  }
+
+  .layout { display: flex; flex-direction: column; gap: 12px; }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(300px, 1.1fr) minmax(290px, .9fr);
+    gap: 12px;
+    align-items: stretch;
+  }
+  .gauge-card, .pilot-card, .card {
+    background: linear-gradient(160deg, rgba(13, 34, 44, .96), rgba(7, 20, 27, .96));
+    border: 1px solid var(--line);
+    border-radius: 21px;
+    box-shadow: var(--shadow);
+  }
+  .gauge-card {
+    position: relative;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px 30px;
+    overflow: hidden;
+  }
+  .gauge-card::before {
+    content: "";
+    position: absolute; inset: -30% -20% auto;
+    height: 75%;
+    background: radial-gradient(closest-side, rgba(54, 216, 232, .085), transparent);
+    pointer-events: none;
+  }
+  #gauge { width: min(100%, 560px); height: auto; aspect-ratio: 1 / 1; display: block; position: relative; z-index: 1; }
+  #gNeedle, #gTarget, #gWind {
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    transition: transform .65s cubic-bezier(.2, .85, .25, 1);
+  }
+  .gauge-center {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 46%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .mode-label {
+    color: var(--muted-2);
+    font-size: clamp(10px, 1.6vw, 13px);
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    white-space: nowrap;
+  }
+  .big-value {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    line-height: .92;
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 28px rgba(54, 216, 232, .18);
+  }
+  .big-value > span:first-child { font-size: clamp(61px, 10vw, 98px); }
+  .big-value .deg {
+    font-size: clamp(20px, 3.6vw, 33px);
+    line-height: 1.1;
+    margin-left: 3px;
+    color: var(--muted-2);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .side-line {
+    margin-top: 7px;
+    color: var(--muted-2);
+    font-size: clamp(9px, 1.3vw, 12px);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .gauge-legend {
+    position: absolute; left: 0; right: 0; bottom: 8px;
+    display: flex; justify-content: center; gap: 14px;
+    color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: 1.2px;
+    text-transform: uppercase; z-index: 2;
+  }
+  .gauge-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .gauge-legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+
+  .pilot-card {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pilot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .pilot-head > span:first-child { color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: 1.8px; }
+  .status-word { color: var(--cyan); font-size: 12px; font-weight: 900; letter-spacing: 1.6px; }
+  .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .mode-btn {
+    min-height: 78px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: rgba(9, 24, 32, .74);
+    padding: 9px 5px 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    color: var(--muted-2);
+    transition: background .15s, border-color .15s, color .15s, transform .1s;
+  }
+  .mode-btn strong { font-size: 15px; font-weight: 900; letter-spacing: .6px; }
+  .mode-btn small { font-size: 9px; font-weight: 700; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; }
+  .mode-btn:active { transform: scale(.98); }
+  .mode-btn.active[data-mode="standby"] { border-color: #47606b; background: #142a34; color: #e9f7fb; }
+  .mode-btn.active[data-mode="auto"] { border-color: var(--cyan); background: var(--cyan-dim); color: #bff8ff; box-shadow: inset 0 0 25px rgba(54, 216, 232, .08); }
+  .mode-btn.active[data-mode="wind"] { border-color: var(--green); background: var(--green-dim); color: #c9ffe2; box-shadow: inset 0 0 25px rgba(54, 221, 138, .07); }
+  .mode-btn:disabled { opacity: .36; }
+
+  .response-card {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(8, 22, 29, .72);
+    min-height: 57px;
+    padding: 8px 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    text-align: left;
+  }
+  .response-title { color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: 1.5px; }
+  .response-main { display: flex; align-items: baseline; gap: 6px; margin-left: auto; }
+  .response-main strong { font-size: 21px; font-weight: 900; color: var(--amber); letter-spacing: .5px; }
+  .response-main em { font-style: normal; font-size: 9px; color: var(--muted-2); font-weight: 800; letter-spacing: 1px; }
+  .response-level { color: var(--muted-2); font-size: 11px; font-weight: 800; min-width: 34px; text-align: right; }
+  .response-card:disabled { opacity: .4; }
+
+  .wind-widget {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(8, 22, 29, .62);
+    padding: 10px 12px 8px;
+  }
+  .wind-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .wind-head span { color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: 1.4px; }
+  .wind-head strong { color: var(--violet); font-size: 16px; font-weight: 900; letter-spacing: .5px; }
+  .wind-bar {
+    position: relative; height: 25px; border-radius: 8px;
+    border: 1px solid var(--line); background: rgba(4, 12, 16, .7); overflow: hidden;
+  }
+  .wind-bar .wind-center { position: absolute; left: 50%; top: 2px; bottom: 2px; width: 1px; margin-left: -.5px; background: var(--muted); opacity: .5; }
+  .wind-bar .wind-target, .wind-bar .wind-needle {
+    position: absolute; top: 3px; bottom: 3px; width: 4px; border-radius: 3px; transform: translateX(-50%);
+    transition: left .55s cubic-bezier(.2, .85, .25, 1);
+  }
+  .wind-bar .wind-target { background: var(--amber); opacity: .65; }
+  .wind-bar .wind-needle { background: var(--violet); box-shadow: 0 0 9px rgba(176, 140, 255, .8); }
+  .wind-bar .wind-letter { position: absolute; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 8px; font-weight: 900; }
+  .wind-bar .wind-letter.port { left: 5px; }
+  .wind-bar .wind-letter.stbd { right: 5px; }
+  .wind-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+
+  .history-widget {
+    flex: 1;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(8, 22, 29, .5);
+    padding: 8px 11px 7px;
+  }
+  .history-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .history-head span { color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: 1.4px; }
+  .history-head strong { color: var(--cyan); font-size: 12px; font-weight: 800; }
+  #trend { width: 100%; flex: 1; min-height: 58px; display: block; }
+
+  .mini-info { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: auto; }
+  .mini-info > div {
+    border: 1px solid var(--line); border-radius: 12px; background: rgba(7, 19, 25, .62);
+    padding: 8px 10px; min-width: 0;
+  }
+  .mini-info span { display: block; color: var(--muted); font-size: 8px; letter-spacing: 1.2px; font-weight: 900; margin-bottom: 3px; }
+  .mini-info strong { display: block; color: var(--muted-2); font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .content { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr); gap: 12px; }
+  .card { padding: 15px; }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+  .card-head h2 { margin: 0; font-size: 11px; letter-spacing: 1.8px; color: var(--muted-2); font-weight: 900; }
+  .card-head > span { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .5px; text-align: right; }
+
+  .rudder-widget { margin-bottom: 12px; }
+  .rudder-label { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: 1.3px; margin-bottom: 5px; }
+  .rudder-label span:nth-child(2) { color: var(--text); font-size: 13px; letter-spacing: .5px; }
+  .rudder-track {
+    position: relative; height: 23px; border: 1px solid var(--line); border-radius: 9px;
+    background: rgba(4, 12, 16, .7); overflow: hidden;
+  }
+  .rudder-center { position: absolute; left: 50%; top: 2px; bottom: 2px; width: 2px; margin-left: -1px; background: var(--muted); opacity: .5; }
+  .rudder-fill { position: absolute; top: 3px; bottom: 3px; width: 0; border-radius: 6px; transition: all .25s ease; }
+  .rudder-fill.stbd { left: 50%; background: var(--green); }
+  .rudder-fill.port { right: 50%; background: var(--red); }
+
+  .course-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .course-btn {
+    position: relative; min-height: 72px; border-radius: 14px; border: 1.5px solid transparent;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    font-weight: 900; transition: transform .1s, opacity .15s, filter .1s;
+  }
+  .course-btn:active { transform: scale(.97); }
+  .course-btn .course-main { font-size: clamp(17px, 3vw, 24px); letter-spacing: .3px; }
+  .course-btn small { font-size: 8px; letter-spacing: 1px; font-weight: 800; opacity: .65; }
+  .course-btn.port { border-color: #5e2029; background: var(--red-dim); color: #ff9ca6; }
+  .course-btn.stbd { border-color: #15603a; background: var(--green-dim); color: #8ff3ba; }
+  .course-btn.port.small, .course-btn.stbd.small { background: rgba(12, 27, 33, .8); }
+  .course-btn:disabled { opacity: .32; }
+  .course-grid.nfu .course-btn.small { opacity: .18; pointer-events: none; }
+  .course-grid.nfu .course-btn[data-deg="10"] { border-color: var(--line-2); background: #102832; color: var(--amber); }
+  .course-grid.nfu .course-btn[data-deg="10"]:active { filter: brightness(1.35); }
+  .course-btn.helm-active { filter: brightness(1.5); box-shadow: 0 0 0 2px rgba(255, 182, 74, .55); }
+
+  .tack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 7px; }
+  .tack-btn {
+    position: relative; overflow: hidden; min-height: 47px; border-radius: 12px;
+    border: 1px solid var(--line); background: rgba(9, 24, 32, .62);
+    color: var(--muted-2); font-size: 9px; font-weight: 900; letter-spacing: 1px;
+  }
+  .tack-btn .hold-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; opacity: .65; pointer-events: none; }
+  .tack-btn.port .hold-fill { background: var(--red-dim); }
+  .tack-btn.stbd .hold-fill { background: var(--green-dim); }
+  .tack-btn.port.holding { color: #ff9ca6; border-color: #5e2029; }
+  .tack-btn.stbd.holding { color: #8ff3ba; border-color: #15603a; }
+  .tack-btn:disabled { opacity: .3; }
+  .safety { margin: 9px 0 0; font-size: 9px; line-height: 1.4; color: var(--muted); letter-spacing: .2px; }
+
+  .inst-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .inst {
+    border: 1px solid var(--line); border-radius: 12px; background: rgba(7, 19, 25, .62);
+    padding: 9px 7px 8px; min-height: 72px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-width: 0;
+  }
+  .inst span { color: var(--muted); font-size: 8px; font-weight: 900; letter-spacing: 1px; white-space: nowrap; }
+  .inst strong { color: var(--text); font-size: clamp(17px, 3vw, 23px); line-height: 1.05; font-weight: 700; }
+  .inst em { color: var(--muted-2); font-style: normal; font-size: 8px; font-weight: 800; letter-spacing: .8px; }
+  .inst:nth-child(1) strong { color: var(--cyan); }
+  .inst:nth-child(2) strong, .inst:nth-child(3) strong { color: var(--amber); }
+  .inst:nth-child(4) strong { color: var(--violet); }
+  .inst:nth-child(5) strong { color: var(--green); }
+  .inst:nth-child(6) strong { color: var(--cyan); }
+
+  .diag-line {
+    display: flex; flex-wrap: wrap; gap: 5px 12px; justify-content: space-between;
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 9px; font-weight: 700;
+  }
+  .diag-line b { color: var(--muted-2); font-weight: 800; }
+
+  footer {
+    display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    color: var(--muted); font-size: 9px; letter-spacing: .4px; padding: 1px 3px 0;
+  }
+
+  #toast {
+    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 17px);
+    transform: translate(-50%, 12px);
+    z-index: 60; pointer-events: none; opacity: 0;
+    background: #0b1d26; border: 1px solid var(--line-2); border-radius: 12px;
+    color: var(--text); font-size: 12px; font-weight: 700;
+    padding: 9px 15px; max-width: calc(100vw - 28px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    transition: opacity .18s, transform .18s;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #toast.err { border-color: #69212c; color: #ffc1c7; }
+
+  .modal {
+    position: fixed; inset: 0; z-index: 50;
+    display: grid; place-items: center;
+    padding: 15px;
+    background: rgba(1, 6, 9, .72);
+    backdrop-filter: blur(8px);
+  }
+  .modal-panel {
+    width: min(700px, 100%); max-height: min(88vh, 860px);
+    background: linear-gradient(165deg, #0d2530, #07151c);
+    border: 1px solid var(--line-2); border-radius: 20px;
+    box-shadow: 0 30px 80px rgba(0,0,0,.65);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+  .modal-head h2 { margin: 0; font-size: 13px; letter-spacing: 1.8px; font-weight: 900; }
+  .modal-head button { color: var(--muted-2); font-size: 24px; line-height: 1; width: 34px; height: 34px; border-radius: 9px; }
+  .modal-body { padding: 15px 17px; overflow: auto; display: flex; flex-direction: column; gap: 17px; }
+  .settings-status {
+    padding: 9px 11px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel-2);
+    color: var(--muted-2); font-size: 11px; font-weight: 600; line-height: 1.4;
+  }
+  .settings-status.ok { border-color: #15583b; background: var(--green-dim); color: #b8f7d2; }
+  .settings-status.err { border-color: #5d1c25; background: var(--red-dim); color: #ffb0b8; }
+  .settings-status.info { border-color: #174a57; background: var(--cyan-dim); color: #bff8ff; }
+  .modal-body section { display: flex; flex-direction: column; gap: 8px; }
+  .modal-body h3 { margin: 0 0 2px; color: var(--cyan); font-size: 10px; letter-spacing: 1.8px; font-weight: 900; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { color: var(--muted-2); font-size: 10px; font-weight: 700; letter-spacing: .3px; }
+  .field input {
+    width: 100%; min-height: 38px;
+    background: #06131a; border: 1px solid var(--line); border-radius: 9px;
+    color: var(--text); padding: 8px 10px; font-size: 12px;
+    outline: none;
+  }
+  .field input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(54,216,232,.09); }
+  .field .hint { color: var(--muted); font-size: 9px; line-height: 1.35; }
+  .modal-foot { display: flex; justify-content: space-between; gap: 9px; padding: 13px 17px; border-top: 1px solid var(--line); }
+  .modal-foot .right { display: flex; gap: 9px; }
+  .btn {
+    min-height: 38px; padding: 0 15px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel-2);
+    color: var(--muted-2); font-size: 11px; font-weight: 800;
+  }
+  .btn.primary { border-color: var(--cyan); background: var(--cyan-dim); color: #bff8ff; }
+  .btn.danger { border-color: #5d1c25; background: var(--red-dim); color: #ffb0b8; }
+  .btn:active { filter: brightness(1.2); }
+  pre {
+    margin: 0; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--line);
+    background: #040d12; color: var(--muted-2);
+    font-size: 10px; line-height: 1.45; overflow: auto; max-height: 180px;
+    white-space: pre-wrap; word-break: break-word; user-select: text; -webkit-user-select: text;
+  }
+  .warn-list { display: flex; flex-direction: column; gap: 4px; }
+  .warn-list div { color: #ffd89c; font-size: 10px; line-height: 1.35; }
+
+  @media (max-width: 880px) {
+    .hero { grid-template-columns: 1fr; }
+    .gauge-card { min-height: 0; padding-bottom: 26px; }
+    #gauge { width: min(100%, 520px); }
+    .pilot-card { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
+    .pilot-head { grid-column: 1 / -1; }
+    .mode-grid { grid-column: 1 / -1; }
+    .response-card { grid-column: 1 / -1; }
+    .wind-widget { grid-column: 1 / -1; }
+    .history-widget { grid-column: 1 / -1; min-height: 120px; }
+    .mini-info { grid-column: 1 / -1; }
+    .content { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    #app { gap: 9px; padding-left: 9px; padding-right: 9px; }
+    .topbar { gap: 8px; }
+    .brand-logo { width: 38px; height: 38px; border-radius: 11px; }
+    .brand h1 { font-size: 17px; }
+    .brand p { max-width: 190px; font-size: 9px; }
+    .chip { height: 29px; padding: 0 8px; font-size: 9px; letter-spacing: .7px; }
+    .icon-btn { width: 34px; height: 34px; }
+    .gauge-card, .pilot-card, .card { border-radius: 17px; }
+    .card { padding: 12px; }
+    .pilot-card { padding: 12px; }
+    .mode-btn { min-height: 69px; }
+    .course-btn { min-height: 63px; }
+    .inst { min-height: 65px; }
+    .modal { padding: 7px; }
+    .modal-panel { max-height: 94vh; }
+    .modal-body { padding: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #gNeedle, #gTarget, #gWind, .rudder-fill { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="13" stroke="#36d8e8" stroke-width="1.7"/>
+          <path d="M16 5v12l8 5" stroke="#ffb64a" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="2.3" fill="#e9f7fb"/>
+        </svg>
+      </div>
+      <div>
+        <h1>AC42 <span>PILOT</span></h1>
+        <p id="connectionText">Connexion…</p>
+      </div>
+    </div>
+    <div class="top-status">
+      <span class="chip" id="chipCan"><i class="dot"></i><span>CAN</span></span>
+      <span class="chip" id="chipCtrl"><i class="dot"></i><span>PUPITRE</span></span>
+      <span class="chip" id="chipAp"><i class="dot"></i><span>AC42</span></span>
+      <button class="icon-btn" id="settingsBtn" aria-label="Réglages" title="Réglages">⚙</button>
+    </div>
+  </header>
+
+  <div id="demoBadge" class="badge hidden">MODE DÉMO</div>
+  <div id="banner" class="banner hidden"></div>
+
+  <main class="layout">
+    <section class="hero">
+      <div class="gauge-card">
+        <svg id="gauge" viewBox="0 0 400 400" role="img" aria-label="Compass et état du pilote"></svg>
+        <div class="gauge-center">
+          <div class="mode-label" id="gMode">HORS LIGNE</div>
+          <div class="big-value"><span id="gValue">—</span><span class="deg">°</span></div>
+          <div class="side-line" id="gSide">CAP</div>
+        </div>
+        <div class="gauge-legend">
+          <span><i style="background:var(--cyan)"></i>Cap</span>
+          <span><i style="background:var(--amber)"></i>Cible</span>
+          <span><i style="background:var(--violet)"></i>Vent</span>
+        </div>
+      </div>
+
+      <div class="pilot-card">
+        <div class="pilot-head">
+          <span>PILOTE AUTOMATIQUE</span>
+          <span class="status-word" id="pilotState">—</span>
+        </div>
+        <div class="mode-grid">
+          <button class="mode-btn" data-mode="standby"><strong>STANDBY</strong><small>débrayé</small></button>
+          <button class="mode-btn" data-mode="auto"><strong>AUTO</strong><small>maintien de cap</small></button>
+          <button class="mode-btn" data-mode="wind"><strong>VENT</strong><small>angle apparent</small></button>
+        </div>
+        <button class="response-card" id="responseBtn" disabled>
+          <span class="response-title">RÉPONSE</span>
+          <span class="response-main"><strong id="respSet">—</strong><em id="respHow"></em></span>
+          <span class="response-level" id="respLevel">—</span>
+        </button>
+        <div class="wind-widget">
+          <div class="wind-head"><span>ANGLE AU VENT</span><strong id="windBarValue">—</strong></div>
+          <div class="wind-bar">
+            <span class="wind-letter port">P</span><span class="wind-letter stbd">S</span>
+            <div class="wind-center"></div>
+            <div class="wind-target" id="windTargetMark"></div>
+            <div class="wind-needle" id="windNeedle"></div>
+          </div>
+          <div class="wind-foot"><span id="windSideText">—</span><span id="windRefText">APPARENT</span></div>
+        </div>
+        <div class="history-widget">
+          <div class="history-head"><span>CAP · 60 S</span><strong id="trendValue">—</strong></div>
+          <svg id="trend" viewBox="0 0 300 84" preserveAspectRatio="none" aria-label="Historique du cap"></svg>
+        </div>
+        <div class="mini-info">
+          <div><span>CIBLE</span><strong id="targetInfo">—</strong></div>
+          <div><span>VENT</span><strong id="windInfo">—</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="card controls">
+        <div class="card-head">
+          <h2>BARRE &amp; CAP</h2>
+          <span id="controlHint">Initialisation…</span>
+        </div>
+        <div class="rudder-widget">
+          <div class="rudder-label"><span>BÂBORD</span><span id="rudderValue">—</span><span>TRIBORD</span></div>
+          <div class="rudder-track">
+            <div class="rudder-center"></div>
+            <div class="rudder-fill" id="rudderFill"></div>
+          </div>
+        </div>
+        <div class="course-grid" id="courseGrid">
+          <button class="course-btn port" data-side="port" data-deg="10"><span class="course-main">−10°</span><small class="course-sub">LOFER</small></button>
+          <button class="course-btn port small" data-side="port" data-deg="1"><span class="course-main">−1°</span><small class="course-sub">LOFER</small></button>
+          <button class="course-btn stbd small" data-side="stbd" data-deg="1"><span class="course-main">+1°</span><small class="course-sub">ABATTRE</small></button>
+          <button class="course-btn stbd" data-side="stbd" data-deg="10"><span class="course-main">+10°</span><small class="course-sub">ABATTRE</small></button>
+        </div>
+        <div class="tack-grid">
+          <button class="tack-btn port" data-tack="port"><span>VIRER BÂBORD</span><span class="hold-fill"></span></button>
+          <button class="tack-btn stbd" data-tack="stbd"><span>VIRER TRIBORD</span><span class="hold-fill"></span></button>
+        </div>
+        <p class="safety">Virement : appui long 2 s. En standby, les boutons ±10° deviennent une barre directe à maintenir.</p>
+      </div>
+
+      <div class="card instruments">
+        <div class="card-head"><h2>INSTRUMENTS</h2><span id="sourceInfo">NMEA 2000 · 250 kbit/s</span></div>
+        <div class="inst-grid">
+          <div class="inst"><span>CAP</span><strong id="iHdg">—</strong><em id="iHdgRef">°M</em></div>
+          <div class="inst"><span>VENT APP.</span><strong id="iAwa">—</strong><em>°</em></div>
+          <div class="inst"><span>VENT VRAI</span><strong id="iTwa">—</strong><em>°</em></div>
+          <div class="inst"><span>TWS</span><strong id="iTws">—</strong><em>kn</em></div>
+          <div class="inst"><span>SOG</span><strong id="iSog">—</strong><em>kn</em></div>
+          <div class="inst"><span>ROUTE</span><strong id="iCog">—</strong><em id="iCogRef">°M</em></div>
+        </div>
+        <div class="diag-line">
+          <span>AC42 <b id="diagAp">—</b></span>
+          <span>Pupitre <b id="diagCtrl">—</b></span>
+          <span>Bus <b id="diagCan">—</b></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Waveshare ESP32-S3-RS485-CAN · NMEA 2000</span>
+    <span id="footerVersion">AC42 Pilot</span>
+  </footer>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="settingsModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Réglages">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h2>RÉGLAGES &amp; DIAGNOSTIC</h2>
+      <button id="closeSettings" aria-label="Fermer">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="settingsStatus" class="settings-status hidden" role="status" aria-live="polite"></div>
+      <section>
+        <h3>RÉSEAU WI-FI</h3>
+        <p class="hint" style="margin:0 0 4px">Aucun réseau STA n’est configuré par défaut : la carte démarre en point d’accès. Renseignez un réseau local ci-dessous pour l’utiliser en priorité.</p>
+        <div class="field"><label for="setApSsid">Nom du réseau du boîtier (AP)</label><input id="setApSsid" maxlength="31" autocomplete="off"><span class="hint">Par défaut : AC42-Pilot-XXXX. Mot de passe AP par défaut : ac42pilot.</span></div>
+        <div class="field"><label for="setApPass">Mot de passe AP</label><input id="setApPass" type="password" maxlength="63" autocomplete="new-password" placeholder="Laisser vide pour conserver"><span class="hint">8 à 63 caractères. Le changer déconnecte les clients.</span></div>
+        <div class="field"><label for="setStaSsid">Réseau local (STA)</label><input id="setStaSsid" maxlength="31" autocomplete="off" placeholder="Vide = point d'accès seul"></div>
+        <div class="field"><label for="setStaPass">Mot de passe STA</label><input id="setStaPass" type="password" maxlength="63" autocomplete="new-password" placeholder="Laisser vide pour conserver"><span class="hint">Si le réseau est inaccessible, l’AP de secours démarre après ~15 s. Vider le SSID pour forcer l’AP.</span></div>
+        <div class="field"><label for="setHostname">Nom d'hôte mDNS</label><input id="setHostname" maxlength="31" autocomplete="off"><span class="hint">http://nom.local — lettres minuscules, chiffres et tirets.</span></div>
+      </section>
+
+      <section>
+        <h3>NMEA 2000</h3>
+        <div class="field"><label for="setCtrl">Adresse du pupitre / contrôleur</label><input id="setCtrl" autocomplete="off" placeholder="auto"><span class="hint">« auto » ou adresse hexadécimale, ex. 0x07. À forcer seulement en cas de conflit.</span></div>
+        <div class="field"><label for="setAp">Adresse du calculateur AC42</label><input id="setAp" autocomplete="off" placeholder="auto"><span class="hint">« auto » ou adresse hexadécimale, ex. 0x02.</span></div>
+        <div class="field"><label for="setRudder">Délai de sécurité barre directe (ms)</label><input id="setRudder" type="number" min="300" max="5000" step="100"><span class="hint">Sans keepalive, la barre est arrêtée automatiquement.</span></div>
+      </section>
+
+      <section>
+        <h3>DIAGNOSTIC</h3>
+        <pre id="diagBox">—</pre>
+        <div id="warnList" class="warn-list"></div>
+      </section>
+
+      <section>
+        <h3>JOURNAL</h3>
+        <pre id="logBox">Chargement…</pre>
+      </section>
+    </div>
+    <div class="modal-foot">
+      <button class="btn danger" id="rebootBtn">Redémarrer</button>
+      <div class="right">
+        <button class="btn" id="cancelSettings">Annuler</button>
+        <button class="btn primary" id="saveSettings">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const $ = (id) => document.getElementById(id);
+const n360 = (v) => ((v % 360) + 360) % 360;
+const n180 = (v) => { v = n360(v); return v > 180 ? v - 360 : v; };
+const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const round0 = (v) => (v == null ? null : Math.round(v));
+const round1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+const fmt = (v, digits = 0) => {
+  if (v == null) return '—';
+  return digits === 0 ? String(Math.round(v)) : v.toFixed(digits);
+};
+const valOrDash = (v, digits = 0) => (v == null ? '—' : fmt(v, digits));
+
+const S = {
+  connected: false,
+  simulated: false,
+  failures: 0,
+  status: null,
+  pilot: {},
+  inst: {},
+  ap: {},
+  controller: {},
+  can: {},
+  wifi: {},
+  warnings: [],
+  nfuActive: false,
+  nfuDir: null,
+  nfuTimer: null,
+  nfuGuard: null,
+  nfuSending: false,
+  courseBusy: false,
+  modeBusy: false,
+  settingsSaving: false,
+  headingHistory: [],
+  lastHeadingSample: 0,
+  pollTimer: null,
+  refreshing: false,
+  lastRefresh: 0,
+};
+
+/* ------------------------------------------------------------------ */
+/* Gauge                                                              */
+/* ------------------------------------------------------------------ */
+let gaugeParts = null;
+
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, value);
+  return el;
+}
+
+function polar(r, deg) {
+  const a = (deg - 90) * Math.PI / 180;
+  return [200 + r * Math.cos(a), 200 + r * Math.sin(a)];
+}
+
+function initGauge() {
+  const gauge = $('gauge');
+  gauge.innerHTML = '';
+  const ring = svgEl('circle', { cx: 200, cy: 200, r: 180, fill: 'none', stroke: '#102b36', 'stroke-width': 22 });
+  gauge.appendChild(ring);
+  gauge.appendChild(svgEl('circle', { cx: 200, cy: 200, r: 166, fill: 'none', stroke: '#0c1e26', 'stroke-width': 1.5 }));
+
+  for (let d = 0; d < 360; d += 5) {
+    const major = d % 30 === 0;
+    const medium = d % 10 === 0;
+    const [x1, y1] = polar(168, d);
+    const [x2, y2] = polar(168 - (major ? 15 : medium ? 9 : 5), d);
+    gauge.appendChild(svgEl('line', {
+      x1, y1, x2, y2,
+      stroke: major ? '#9fb6bf' : '#35535f',
+      'stroke-width': major ? 2.2 : 1.2,
+      'stroke-linecap': 'round',
+      opacity: major ? 1 : medium ? .8 : .5,
+    }));
+  }
+
+  const cardinals = { 0: 'N', 90: 'E', 180: 'S', 270: 'W' };
+  for (let d = 0; d < 360; d += 30) {
+    const [x, y] = polar(129, d);
+    const label = svgEl('text', {
+      x, y: y + 1,
+      fill: cardinals[d] ? '#e9f7fb' : '#718d98',
+      'font-size': cardinals[d] ? 26 : 14,
+      'font-weight': cardinals[d] ? 700 : 500,
+      'text-anchor': 'middle',
+      'dominant-baseline': 'central',
+    });
+    label.textContent = cardinals[d] || String(d);
+    gauge.appendChild(label);
+  }
+
+  const arcPort = svgEl('path', {
+    d: describeArc(180, -58, -8), fill: 'none', stroke: '#ff5a6b',
+    'stroke-width': 3.5, 'stroke-linecap': 'round', opacity: .6,
+  });
+  const arcStbd = svgEl('path', {
+    d: describeArc(180, 8, 58), fill: 'none', stroke: '#36dd8a',
+    'stroke-width': 3.5, 'stroke-linecap': 'round', opacity: .6,
+  });
+  gauge.appendChild(arcPort);
+  gauge.appendChild(arcStbd);
+
+  const target = svgEl('g', { id: 'gTarget' });
+  target.appendChild(svgEl('path', {
+    d: 'M200 18 L210 34 L200 48 L190 34 Z',
+    fill: '#ffb64a', stroke: '#07141b', 'stroke-width': 2,
+  }));
+  gauge.appendChild(target);
+
+  const wind = svgEl('g', { id: 'gWind' });
+  wind.appendChild(svgEl('line', {
+    x1: 200, y1: 76, x2: 200, y2: 125, stroke: '#b08cff', 'stroke-width': 3, 'stroke-linecap': 'round',
+  }));
+  wind.appendChild(svgEl('path', {
+    d: 'M200 64 L208 80 L200 75 L192 80 Z', fill: '#b08cff',
+  }));
+  const wt = svgEl('text', {
+    x: 200, y: 54, fill: '#b08cff', 'font-size': 13, 'font-weight': 800,
+    'text-anchor': 'middle', 'dominant-baseline': 'central',
+  });
+  wt.textContent = 'A';
+  wind.appendChild(wt);
+  gauge.appendChild(wind);
+
+  const needle = svgEl('g', { id: 'gNeedle' });
+  needle.appendChild(svgEl('line', {
+    x1: 200, y1: 200, x2: 200, y2: 53, stroke: '#36d8e8',
+    'stroke-width': 3.2, 'stroke-linecap': 'round',
+  }));
+  needle.appendChild(svgEl('path', {
+    d: 'M200 38 L207 58 L200 53 L193 58 Z', fill: '#36d8e8',
+  }));
+  needle.appendChild(svgEl('circle', { cx: 200, cy: 200, r: 7, fill: '#36d8e8', stroke: '#07141b', 'stroke-width': 2 }));
+  gauge.appendChild(needle);
+
+  gauge.appendChild(svgEl('circle', {
+    cx: 200, cy: 200, r: 93, fill: 'rgba(5, 15, 20, .92)', stroke: '#15333f', 'stroke-width': 1.5,
+  }));
+
+  gaugeParts = { needle, target, wind };
+}
+
+function describeArc(r, a0, a1) {
+  const [x0, y0] = polar(r, a0);
+  const [x1, y1] = polar(r, a1);
+  const large = ((a1 - a0 + 360) % 360) > 180 ? 1 : 0;
+  return `M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rendering                                                          */
+/* ------------------------------------------------------------------ */
+function modeKey() {
+  const raw = (S.pilot.mode || '').toLowerCase();
+  if (raw === 'auto') return 'auto';
+  if (raw === 'wind') return 'wind';
+  if (raw === 'nav') return 'nav';
+  if (raw === 'no drift') return 'nodrift';
+  if (raw === 'nfu') return 'nfu';
+  if (raw === 'standby') return 'standby';
+  return 'unknown';
+}
+
+function modeDisplay(mode, engaged) {
+  if (!engaged) return 'STANDBY';
+  switch (mode) {
+    case 'auto': return 'AUTO';
+    case 'wind': return 'VENT';
+    case 'nav': return 'NAV';
+    case 'nodrift': return 'NO DRIFT';
+    case 'nfu': return 'NFU';
+    case 'standby': return 'STANDBY';
+    default: return '—';
+  }
+}
+
+function effectiveHeading() {
+  return num(S.inst.heading_deg);
+}
+
+function alignedTarget() {
+  let target = num(S.pilot.target_deg);
+  if (target == null) return null;
+  const targetRef = S.pilot.target_ref;
+  const headingRef = S.inst.heading_ref;
+  const variation = num(S.inst.variation_deg);
+  if (variation != null && targetRef && headingRef && targetRef !== headingRef) {
+    if (headingRef === 'M' && targetRef === 'T') target = target - variation;
+    if (headingRef === 'T' && targetRef === 'M') target = target + variation;
+  }
+  return n360(target);
+}
+
+function isControllerReady() {
+  return S.connected && !!(S.controller && S.controller.present);
+}
+
+function canSend() {
+  return isControllerReady();
+}
+
+function render() {
+  const connected = S.connected;
+  const pilot = S.pilot || {};
+  const inst = S.inst || {};
+  const mode = modeKey();
+  const engaged = !!pilot.engaged && connected;
+  const heading = effectiveHeading();
+  const target = alignedTarget();
+  const windTarget = num(pilot.wind_target_deg);
+  const awa = num(inst.awa_deg);
+  const windSide = pilot.wind_target_side || (awa != null ? (awa >= 0 ? 'stbd' : 'port') : null);
+
+  /* Connection / status chips */
+  const can = S.can || {};
+  const ctrl = S.controller || {};
+  const ap = S.ap || {};
+  const freshRx = can.last_rx_age_ms != null && can.last_rx_age_ms < 5000;
+  setChip('chipCan', !connected ? 'off' : (can.ready && freshRx ? 'ok' : 'warn'));
+  setChip('chipCtrl', !connected ? 'off' : (ctrl.present ? 'ok' : 'off'));
+  setChip('chipAp', !connected ? 'off' : (ap.present ? 'ok' : (ap.known || ap.forced ? 'warn' : 'off')));
+  const wifiAddr = S.wifi.sta_connected && S.wifi.sta_ip
+    ? S.wifi.sta_ip
+    : (S.wifi.ap_ip || 'en attente Wi-Fi');
+  $('connectionText').textContent = !connected
+    ? 'Liaison perdue'
+    : (S.simulated
+        ? 'Démonstration locale'
+        : `${wifiAddr}${S.wifi.fallback_ap ? ' · AP secours' : ''} · ${can.state || 'CAN'}`);
+  $('demoBadge').classList.toggle('hidden', !S.simulated);
+
+  /* Banner */
+  let banner = '';
+  let bannerClass = 'banner';
+  if (!connected) {
+    banner = 'Liaison avec le boîtier perdue. Les dernières valeurs restent affichées mais aucune commande ne partira.';
+    bannerClass += ' error';
+  } else if (!can.ready) {
+    banner = 'Bus CAN non opérationnel. Vérifiez le câblage NMEA 2000 et la terminaison.';
+    bannerClass += ' error';
+  } else if (!ctrl.present) {
+    banner = 'Aucun pupitre/contrôleur B&G détecté. Le AC42 n’accepte les commandes que si un contrôleur actif émet son heartbeat (PGN 65305).';
+    bannerClass += ' error';
+  } else if (!ap.known && !ap.forced) {
+    banner = 'Adresse de l’AC42 non détectée. Les commandes seront envoyées à l’adresse par défaut 0x02.';
+  } else if (S.wifi.fallback_ap) {
+    banner = 'Réseau Wi-Fi configuré inaccessible — point d’accès de secours actif. Configurez le réseau dans les réglages.';
+    bannerClass += ' info';
+  } else if (S.status && S.status.config && S.status.config.reboot_pending) {
+    banner = 'Réglages en attente de redémarrage. Ouvrez Réglages puis cliquez sur « Redémarrer » pour les appliquer.';
+    bannerClass += ' info';
+  } else if (!pilot.mode_fresh) {
+    banner = 'État du pilote non reçu. Vérifiez que l’AC42 diffuse les PGN 65340/65305.';
+  }
+  const bannerEl = $('banner');
+  bannerEl.textContent = banner;
+  bannerEl.className = bannerClass + (banner ? '' : ' hidden');
+
+  /* Mode buttons */
+  document.querySelectorAll('.mode-btn').forEach((btn) => {
+    const key = btn.dataset.mode;
+    btn.classList.toggle('active', connected && (
+      (key === 'standby' && (!engaged || mode === 'standby' || mode === 'nfu')) ||
+      (key === 'auto' && mode === 'auto') ||
+      (key === 'wind' && mode === 'wind')
+    ));
+    btn.disabled = !canSend();
+  });
+
+  /* Central readout */
+  const stateText = !connected ? 'HORS LIGNE'
+    : (!pilot.mode_fresh ? '—'
+      : modeDisplay(mode, engaged));
+  $('pilotState').textContent = stateText;
+  $('gMode').textContent = !connected ? 'HORS LIGNE'
+    : (!pilot.mode_fresh ? 'ÉTAT INCONNU'
+      : modeDisplay(mode, engaged));
+
+  let big = null;
+  let side = 'CAP ACTUEL';
+  if (connected) {
+    if (!engaged) {
+      big = heading;
+      side = 'CAP ACTUEL';
+    } else if (mode === 'wind') {
+      big = windTarget != null ? Math.abs(windTarget) : (awa != null ? Math.abs(awa) : null);
+      side = windSide === 'stbd' ? 'VENT · TRIBORD' : (windSide === 'port' ? 'VENT · BÂBORD' : 'ANGLE AU VENT');
+    } else if (mode === 'auto' || mode === 'nav' || mode === 'nodrift') {
+      big = target != null ? target : heading;
+      side = target != null ? `CAP CIBLE${pilot.target_ref ? ' · ' + pilot.target_ref : ''}` : 'CAP ACTUEL';
+    } else {
+      big = heading;
+      side = 'CAP ACTUEL';
+    }
+  }
+  $('gValue').textContent = big == null ? '—' : fmt(big, 0);
+  $('gSide').textContent = side;
+
+  const targetInfo = $('targetInfo');
+  const windInfo = $('windInfo');
+  if (!connected) {
+    targetInfo.textContent = '—';
+    windInfo.textContent = '—';
+  } else {
+    targetInfo.textContent = pilot.target_deg != null
+      ? `${fmt(pilot.target_deg, 0)}°${pilot.target_ref ? ' ' + pilot.target_ref : ''}`
+      : '—';
+    windInfo.textContent = windTarget != null
+      ? `${fmt(Math.abs(windTarget), 0)}° ${windSide === 'port' ? 'BÂBORD' : windSide === 'stbd' ? 'TRIBORD' : ''}`.trim()
+      : (awa != null ? `${fmt(Math.abs(awa), 0)}° APP.` : '—');
+  }
+
+  /* Wind widget */
+  const windAngle = connected && awa != null ? n180(awa) : null;
+  const windMarkAngle = connected && windTarget != null ? n180(windTarget) : null;
+  const windPct = (angle) => `${50 + clamp(angle / 180, -1, 1) * 47}%`;
+  if (windAngle != null) {
+    $('windNeedle').style.display = 'block';
+    $('windNeedle').style.left = windPct(windAngle);
+    $('windBarValue').textContent = `${fmt(Math.abs(windAngle), 0)}° ${windAngle >= 0 ? 'S' : 'P'}`;
+    $('windSideText').textContent = windAngle >= 0 ? 'AWA · TRIBORD' : 'AWA · BÂBORD';
+  } else {
+    $('windNeedle').style.display = 'none';
+    $('windBarValue').textContent = '—';
+    $('windSideText').textContent = '—';
+  }
+  if (windMarkAngle != null) {
+    $('windTargetMark').style.display = 'block';
+    $('windTargetMark').style.left = windPct(windMarkAngle);
+  } else {
+    $('windTargetMark').style.display = 'none';
+  }
+  $('windRefText').textContent = connected && mode === 'wind' ? 'CIBLE VENT' : 'VENT APP.';
+
+  drawHeadingTrend(heading, connected);
+
+  /* Response */
+  const resp = pilot.response || {};
+  const responseReady = connected && engaged && canSend();
+  $('responseBtn').disabled = !responseReady;
+  if (responseReady) {
+    $('respSet').textContent = resp.valid ? (resp.set === 'high' ? 'HI' : 'LO') : '—';
+    $('respHow').textContent = resp.valid ? (resp.auto ? 'AUTO' : 'MAN') : '';
+    $('respLevel').textContent = resp.valid && resp.level != null ? `${resp.level}/10` : '—';
+  } else {
+    $('respSet').textContent = '—';
+    $('respHow').textContent = '';
+    $('respLevel').textContent = '—';
+  }
+
+  /* Controls */
+  const modeNav = mode === 'nav';
+  const controlsDisabled = !canSend();
+  const courseGrid = $('courseGrid');
+  courseGrid.classList.toggle('nfu', connected && !engaged);
+  document.querySelectorAll('.course-btn').forEach((btn) => {
+    const isTen = btn.dataset.deg === '10';
+    const label = btn.querySelector('.course-main');
+    const sub = btn.querySelector('.course-sub');
+    if (connected && !engaged) {
+      label.textContent = isTen ? 'BARRE' : '·';
+      sub.textContent = isTen ? (btn.dataset.side === 'port' ? 'BÂBORD' : 'TRIBORD') : 'NFU';
+      btn.disabled = controlsDisabled || !isTen;
+    } else {
+      label.textContent = `${btn.dataset.side === 'port' ? '−' : '+'}${btn.dataset.deg}°`;
+      sub.textContent = btn.dataset.side === 'port' ? 'LOFER' : 'ABATTRE';
+      btn.disabled = controlsDisabled || !engaged || modeNav;
+    }
+  });
+  document.querySelectorAll('.tack-btn').forEach((btn) => {
+    btn.disabled = controlsDisabled || !engaged || modeNav;
+  });
+
+  $('controlHint').textContent = !connected ? 'Hors ligne'
+    : (!ctrl.present ? 'En attente du pupitre B&G'
+      : (!engaged ? 'Standby · barre directe disponible'
+        : (modeNav ? 'Nav · corrections désactivées' : 'Pilotage actif · corrections disponibles')));
+
+  /* Rudder */
+  const rudder = num(inst.rudder_deg);
+  const fill = $('rudderFill');
+  if (rudder == null || !connected) {
+    fill.style.width = '0%';
+    $('rudderValue').textContent = '—';
+  } else {
+    const max = 45;
+    const pct = clamp(Math.abs(rudder) / max, 0, 1) * 50;
+    if (rudder >= 0) {
+      fill.className = 'rudder-fill stbd';
+      fill.style.left = '50%';
+      fill.style.right = 'auto';
+      fill.style.width = pct + '%';
+    } else {
+      fill.className = 'rudder-fill port';
+      fill.style.right = '50%';
+      fill.style.left = 'auto';
+      fill.style.width = pct + '%';
+    }
+    const dir = Math.abs(rudder) < .5 ? '' : (rudder > 0 ? ' S' : ' P');
+    $('rudderValue').textContent = `${Math.abs(Math.round(rudder))}°${dir}`;
+  }
+
+  /* Instruments */
+  setText('iHdg', valOrDash(heading, 0));
+  $('iHdgRef').textContent = inst.heading_ref ? `°${inst.heading_ref}` : '°';
+  setText('iAwa', awa == null ? '—' : valOrDash(Math.abs(awa), 0));
+  setText('iTwa', num(inst.twa_deg) == null ? '—' : valOrDash(Math.abs(inst.twa_deg), 0));
+  setText('iTws', valOrDash(num(inst.tws_kn), 1));
+  setText('iSog', valOrDash(num(inst.sog_kn), 1));
+  setText('iCog', valOrDash(num(inst.cog_deg), 0));
+  $('iCogRef').textContent = inst.cog_ref ? `°${inst.cog_ref}` : '°';
+
+  /* Diagnostic */
+  const apLabel = ap.present ? (ap.address_hex || '—') : (ap.known ? `${ap.address_hex} ⚠` : (ap.forced ? `${ap.effective_address_hex} forcé` : '—'));
+  setText('diagAp', apLabel);
+  setText('diagCtrl', ctrl.present ? (ctrl.address_hex || '—') : '—');
+  setText('diagCan', can.ready ? (freshRx ? 'OK' : 'muet') : (can.state || '—'));
+  $('sourceInfo').textContent = S.simulated ? 'SIMULATION' : 'NMEA 2000 · 250 kbit/s';
+
+  /* Gauge */
+  if (gaugeParts) {
+    if (heading == null || !connected) {
+      gaugeParts.needle.style.opacity = '0';
+      gaugeParts.wind.style.opacity = '0';
+    } else {
+      gaugeParts.needle.style.opacity = '1';
+      gaugeParts.needle.style.transform = `rotate(${n360(heading)}deg)`;
+      if (awa != null) {
+        gaugeParts.wind.style.opacity = '.85';
+        gaugeParts.wind.style.transform = `rotate(${n360(heading + awa)}deg)`;
+      } else {
+        gaugeParts.wind.style.opacity = '0';
+      }
+    }
+    const showTarget = connected && target != null && engaged && mode !== 'wind';
+    gaugeParts.target.style.opacity = showTarget ? '1' : '0';
+    if (showTarget) gaugeParts.target.style.transform = `rotate(${n360(target)}deg)`;
+  }
+
+  /* Footer */
+  if (S.status) {
+    $('footerVersion').textContent = `v${S.status.version || '—'} · ${S.status.uptime_s != null ? Math.floor(S.status.uptime_s / 3600) + ' h' : '—'}`;
+  }
+}
+
+function setText(id, text) {
+  const el = $(id);
+  if (el) el.textContent = text;
+}
+
+function unwrapAngle(previous, value) {
+  let v = value;
+  while (v - previous > 180) v -= 360;
+  while (v - previous < -180) v += 360;
+  return v;
+}
+
+function drawHeadingTrend(heading, connected) {
+  const svg = $('trend');
+  if (!svg) return;
+  const now = Date.now();
+  if (connected && heading != null) {
+    if (!S.headingHistory.length) {
+      S.headingHistory.push({ t: now - 60000, v: n360(heading) });
+    }
+    if (!S.lastHeadingSample || now - S.lastHeadingSample >= 2500) {
+      S.headingHistory.push({ t: now, v: n360(heading) });
+      S.lastHeadingSample = now;
+    }
+  }
+  const cutoff = now - 60000;
+  S.headingHistory = S.headingHistory.filter((p) => p.t >= cutoff);
+  const history = S.headingHistory;
+  if (!history.length) {
+    svg.innerHTML = '';
+    $('trendValue').textContent = '—';
+    return;
+  }
+
+  const points = [];
+  let previous = history[0].v;
+  for (const sample of history) {
+    const value = unwrapAngle(previous, sample.v);
+    points.push({ t: sample.t, v: value });
+    previous = value;
+  }
+  if (points.length === 1) {
+    points.unshift({ t: now - 60000, v: points[0].v });
+  }
+
+  const values = points.map((p) => p.v);
+  const center = (Math.min(...values) + Math.max(...values)) / 2;
+  const half = Math.max(10, (Math.max(...values) - Math.min(...values)) / 2 + 2);
+  const x = (t) => 5 + ((t - (now - 60000)) / 60000) * 290;
+  const y = (v) => 7 + (0.5 - (v - center) / (2 * half)) * 60;
+
+  const parts = [];
+  for (const gy of [7, 37, 67]) {
+    parts.push(`<line x1="5" y1="${gy}" x2="295" y2="${gy}" stroke="#15333f" stroke-width="1" stroke-dasharray="2 4" opacity=".8"/>`);
+  }
+  parts.push(`<text x="5" y="80" fill="#6f8f9b" font-size="7" font-weight="700">−60 s</text>`);
+  parts.push(`<text x="295" y="80" fill="#6f8f9b" font-size="7" font-weight="700" text-anchor="end">maintenant</text>`);
+  const line = points.map((p) => `${x(p.t).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ');
+  parts.push(`<polyline points="${line}" fill="none" stroke="#36d8e8" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`);
+  const last = points[points.length - 1];
+  parts.push(`<circle cx="${x(last.t).toFixed(1)}" cy="${y(last.v).toFixed(1)}" r="2.2" fill="#36d8e8"/>`);
+  svg.innerHTML = parts.join('');
+
+  const delta = n180(history[history.length - 1].v - history[0].v);
+  $('trendValue').textContent = `${fmt(n360(history[history.length - 1].v), 0)}° · ${delta >= 0 ? '+' : ''}${fmt(delta, 1)}°`;
+}
+
+function setChip(id, state) {
+  const el = $(id);
+  if (!el) return;
+  el.classList.remove('ok', 'warn', 'off');
+  if (state) el.classList.add(state);
+}
+
+/* ------------------------------------------------------------------ */
+/* API                                                                */
+/* ------------------------------------------------------------------ */
+async function api(path, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  try {
+    const response = await fetch(path, {
+      cache: 'no-store',
+      signal: controller.signal,
+      ...options,
+      headers: {
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(options.headers || {}),
+      },
+    });
+    let data = null;
+    try { data = await response.json(); } catch (_) {}
+    if (!response.ok || (data && data.ok === false)) {
+      const msg = (data && (data.error || data.message)) || `Erreur HTTP ${response.status}`;
+      throw new Error(msg);
+    }
+    return data;
+  } catch (err) {
+    if (err && err.name === 'AbortError') {
+      throw new Error('Délai dépassé — boîtier injoignable');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function refreshStatus() {
+  if (S.refreshing) return;
+  if (document.hidden && Date.now() - S.lastRefresh < 4000) return;
+  S.refreshing = true;
+  try {
+    const data = await api('/api/status');
+    S.status = data;
+    S.pilot = data.pilot || {};
+    S.inst = data.instruments || {};
+    S.ap = data.ap || {};
+    S.controller = data.controller || {};
+    S.can = data.can || {};
+    S.wifi = data.wifi || {};
+    S.warnings = Array.isArray(data.warnings) ? data.warnings : [];
+    S.simulated = !!data.simulated;
+    S.connected = true;
+    S.failures = 0;
+    S.lastRefresh = Date.now();
+    render();
+  } catch (err) {
+    S.failures++;
+    if (S.failures >= 2) {
+      S.connected = false;
+      render();
+    }
+  } finally {
+    S.refreshing = false;
+  }
+}
+
+async function postCommand(path, body, successMessage) {
+  try {
+    const data = await api(path, { method: 'POST', body: JSON.stringify(body) });
+    if (successMessage) toast(successMessage);
+    setTimeout(refreshStatus, 350);
+    return data;
+  } catch (err) {
+    toast(err.message || 'Commande refusée', true);
+    return null;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Commands                                                           */
+/* ------------------------------------------------------------------ */
+async function sendMode(mode) {
+  if (!canSend() || S.modeBusy) return;
+  S.modeBusy = true;
+  const labels = { standby: 'Standby', auto: 'Auto', wind: 'Vent' };
+  await postCommand('/api/mode', { mode }, `Mode ${labels[mode] || mode}`);
+  S.modeBusy = false;
+}
+
+async function sendCourse(side, deg) {
+  if (!canSend()) return;
+  await postCommand('/api/course', { side, deg }, `${side === 'stbd' ? '+' : '−'}${deg}°`);
+}
+
+async function sendTack(side) {
+  if (!canSend()) return;
+  await postCommand('/api/tack', { dir: side }, `Virement ${side === 'stbd' ? 'tribord' : 'bâbord'}`);
+}
+
+function nextResponseSet() {
+  const resp = S.pilot.response || {};
+  if (!resp.valid) return 'auto';
+  if (resp.auto) return 'low';
+  if (resp.set === 'low') return 'high';
+  return 'auto';
+}
+
+async function sendResponse() {
+  if (!canSend() || !S.pilot.response || !S.pilot.response.valid) return;
+  const set = nextResponseSet();
+  const labels = { auto: 'Réponse auto', low: 'Réponse basse', high: 'Réponse haute' };
+  await postCommand('/api/response', { set }, labels[set]);
+}
+
+/* ------------------------------------------------------------------ */
+/* NFU (direct helm)                                                  */
+/* ------------------------------------------------------------------ */
+async function rudderCommand(dir) {
+  if (S.nfuSending && dir !== 'stop') return;
+  S.nfuSending = true;
+  try {
+    await api('/api/rudder', { method: 'POST', body: JSON.stringify({ dir }) });
+  } catch (err) {
+    if (dir !== 'stop') {
+      toast('Liaison perdue: barre arrêtée', true);
+      stopNfu(false);
+    }
+  } finally {
+    S.nfuSending = false;
+  }
+}
+
+function startNfu(dir, button) {
+  if (!canSend() || S.engaged) return;
+  if (S.nfuActive) return;
+  S.nfuActive = true;
+  S.nfuDir = dir;
+  S.nfuStart = Date.now();
+  button.classList.add('helm-active');
+  toast(`Barre ${dir === 'stbd' ? 'tribord' : 'bâbord'}`);
+  rudderCommand(dir);
+  S.nfuTimer = setInterval(() => rudderCommand(dir), 300);
+  S.nfuGuard = setTimeout(() => {
+    toast('Barre: arrêt de sécurité (8 s)', true);
+    stopNfu(true);
+  }, 8000);
+}
+
+function stopNfu(sendStop = true) {
+  if (!S.nfuActive) return;
+  clearInterval(S.nfuTimer);
+  clearTimeout(S.nfuGuard);
+  S.nfuTimer = null;
+  S.nfuGuard = null;
+  S.nfuActive = false;
+  S.nfuDir = null;
+  document.querySelectorAll('.course-btn').forEach((b) => b.classList.remove('helm-active'));
+  if (sendStop) {
+    fetch('/api/rudder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dir: 'stop' }),
+      keepalive: true,
+    }).catch(() => {});
+    setTimeout(() => {
+      fetch('/api/rudder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dir: 'stop' }),
+        keepalive: true,
+      }).catch(() => {});
+    }, 150);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Long press tack                                                    */
+/* ------------------------------------------------------------------ */
+function bindTack(button) {
+  const side = button.dataset.tack;
+  const fill = button.querySelector('.hold-fill');
+  const HOLD_MS = 2000;
+  let start = 0;
+  let raf = 0;
+  let done = false;
+
+  const reset = () => {
+    cancelAnimationFrame(raf);
+    raf = 0;
+    fill.style.width = '0%';
+    button.classList.remove('holding');
+  };
+  const step = () => {
+    const p = Math.min(1, (performance.now() - start) / HOLD_MS);
+    fill.style.width = `${p * 100}%`;
+    if (p >= 1 && !done) {
+      done = true;
+      button.classList.remove('holding');
+      fill.style.width = '0%';
+      if (navigator.vibrate) navigator.vibrate(25);
+      sendTack(side);
+    } else if (!done) {
+      raf = requestAnimationFrame(step);
+    }
+  };
+  const begin = (event) => {
+    if (button.disabled || !canSend() || !S.pilot.engaged) return;
+    event.preventDefault();
+    done = false;
+    start = performance.now();
+    button.classList.add('holding');
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(step);
+  };
+  const end = () => {
+    if (!done) reset();
+  };
+  button.addEventListener('pointerdown', begin);
+  button.addEventListener('pointerup', end);
+  button.addEventListener('pointerleave', end);
+  button.addEventListener('pointercancel', end);
+}
+
+/* ------------------------------------------------------------------ */
+/* Settings                                                           */
+/* ------------------------------------------------------------------ */
+function fillSettings(data) {
+  $('setApSsid').value = data.ap_ssid || '';
+  $('setApPass').value = '';
+  $('setStaSsid').value = data.sta_ssid || '';
+  $('setStaPass').value = '';
+  $('setHostname').value = data.hostname || 'ac42-pilot';
+  $('setCtrl').value = data.controller_override || 'auto';
+  $('setAp').value = data.ap_override || 'auto';
+  $('setRudder').value = data.rudder_timeout_ms || 1000;
+  $('diagBox').textContent = [
+    `Version       : ${data.version || '—'}`,
+    `AP            : ${data.ap_ip || '—'}`,
+    `STA           : ${data.sta_ip || '—'}`,
+    `MAC           : ${data.mac || '—'}`,
+  ].join('\n');
+  if (data.reboot_pending) {
+    setSettingsStatus('Réglages enregistrés en attente de redémarrage. Cliquez sur « Redémarrer ».', 'ok');
+  }
+}
+
+function updateDiagnostics() {
+  if (!S.status) return;
+  const can = S.can || {};
+  const ap = S.ap || {};
+  const ctrl = S.controller || {};
+  $('diagBox').textContent = [
+    `Version        : ${S.status.version || '—'}`,
+    `Uptime         : ${S.status.uptime_s != null ? Math.floor(S.status.uptime_s / 60) + ' min' : '—'}`,
+    `Mémoire libre  : ${S.status.free_heap != null ? Math.round(S.status.free_heap / 1024) + ' Ko' : '—'}`,
+    `Wi-Fi mode     : ${S.wifi.mode || '—'}${S.wifi.fallback_ap ? ' (AP de secours)' : ''}`,
+    `Wi-Fi AP       : ${S.wifi.ap_started ? `${S.wifi.ap_ip || '—'} (${S.wifi.ap_ssid || '—'})` : 'désactivé'}`,
+    `Wi-Fi STA      : ${S.wifi.sta_connected ? S.wifi.sta_ip : (S.wifi.sta_configured === false ? 'non configuré' : 'déconnecté')}`,
+    `CAN            : ${can.state || '—'} · RX ${can.rx_frames ?? 0} · TX ${can.tx_frames ?? 0} · err ${can.tx_errors ?? 0}`,
+    `AC42           : ${ap.known ? ap.address_hex : 'inconnu'}${ap.forced ? ' (forcé)' : ''}`,
+    `Pupitre        : ${ctrl.present ? ctrl.address_hex : 'absent'}${ctrl.forced ? ' (forcé)' : ''}`,
+    `Dernière trame : ${can.last_rx_age_ms != null ? can.last_rx_age_ms + ' ms' : '—'}`,
+  ].join('\n');
+  const list = $('warnList');
+  list.innerHTML = '';
+  for (const warning of S.warnings || []) {
+    const div = document.createElement('div');
+    div.textContent = `⚠ ${warning}`;
+    list.appendChild(div);
+  }
+}
+
+async function loadLog() {
+  try {
+    const rows = await api('/api/log');
+    const lines = (Array.isArray(rows) ? rows : []).map((row) => {
+      const secs = (row.ms / 1000).toFixed(1).padStart(7, ' ');
+      return `[${secs}s] ${row.t}`;
+    });
+    $('logBox').textContent = lines.length ? lines.join('\n') : 'Journal vide.';
+    $('logBox').scrollTop = $('logBox').scrollHeight;
+  } catch (err) {
+    $('logBox').textContent = `Journal indisponible: ${err.message}`;
+  }
+}
+
+async function openSettings() {
+  $('settingsModal').classList.remove('hidden');
+  const saveBtn = $('saveSettings');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Enregistrer';
+  setSettingsStatus('Chargement des réglages…', 'info');
+  try {
+    const data = await api('/api/settings');
+    fillSettings(data);
+    if (!data.reboot_pending) {
+      setSettingsStatus('', '');
+    }
+    saveBtn.disabled = false;
+  } catch (err) {
+    setSettingsStatus(`Réglages indisponibles : ${err.message}`, 'err');
+    toast(`Réglages indisponibles: ${err.message}`, true);
+  }
+  updateDiagnostics();
+  loadLog();
+}
+
+function setSettingsStatus(message, kind = 'info') {
+  const el = $('settingsStatus');
+  if (!el) return;
+  if (!message) {
+    el.textContent = '';
+    el.className = 'settings-status hidden';
+    return;
+  }
+  el.textContent = message;
+  el.className = `settings-status ${kind}`;
+  const body = document.querySelector('.modal-body');
+  if (body) body.scrollTop = 0;
+}
+
+function closeSettings() {
+  $('settingsModal').classList.add('hidden');
+}
+
+async function saveSettings() {
+  if (S.settingsSaving) return;
+  S.settingsSaving = true;
+  const saveBtn = $('saveSettings');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Enregistrement…';
+  setSettingsStatus('Enregistrement des réglages…', 'info');
+
+  const body = {
+    ap_ssid: $('setApSsid').value.trim(),
+    sta_ssid: $('setStaSsid').value.trim(),
+    hostname: $('setHostname').value.trim(),
+    controller_override: $('setCtrl').value.trim() || 'auto',
+    ap_override: $('setAp').value.trim() || 'auto',
+    rudder_timeout_ms: Number($('setRudder').value) || 1000,
+  };
+  const apPass = $('setApPass').value;
+  const staPass = $('setStaPass').value;
+  if (apPass) body.ap_password = apPass;
+  if (staPass) body.sta_password = staPass;
+
+  try {
+    const data = await api('/api/settings', { method: 'POST', body: JSON.stringify(body) });
+    if (data.reboot_required) {
+      setSettingsStatus(
+        'Réglages enregistrés. Un redémarrage est nécessaire pour appliquer les paramètres réseau. Cliquez sur « Redémarrer ».',
+        'ok');
+      toast('Réglages enregistrés — redémarrage requis');
+    } else {
+      setSettingsStatus(data.message || 'Réglages enregistrés.', 'ok');
+      toast(data.message || 'Réglages enregistrés');
+      setTimeout(() => {
+        closeSettings();
+        refreshStatus();
+      }, 900);
+    }
+  } catch (err) {
+    const message = err && err.message ? err.message : 'Réglages refusés';
+    setSettingsStatus(message, 'err');
+    toast(message, true);
+  } finally {
+    S.settingsSaving = false;
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Enregistrer';
+  }
+}
+
+async function rebootDevice() {
+  if (!confirm('Redémarrer le boîtier AC42 Pilot ?')) return;
+  try {
+    await api('/api/reboot', { method: 'POST' });
+    toast('Redémarrage…');
+    closeSettings();
+    $('banner').textContent = 'Redémarrage en cours. Reconnectez-vous au réseau Wi-Fi (AP ou STA) puis rechargez cette page.';
+    $('banner').className = 'banner info';
+    setTimeout(() => location.reload(), 9000);
+  } catch (err) {
+    toast(err.message || 'Redémarrage impossible', true);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Toast                                                              */
+/* ------------------------------------------------------------------ */
+let toastTimer = null;
+function toast(message, isError = false) {
+  const el = $('toast');
+  el.textContent = message;
+  el.className = 'show' + (isError ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 2200);
+}
+
+/* ------------------------------------------------------------------ */
+/* Events                                                             */
+/* ------------------------------------------------------------------ */
+function bindEvents() {
+  document.querySelectorAll('.mode-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!canSend()) {
+        toast('Pupitre B&G non détecté', true);
+        return;
+      }
+      sendMode(btn.dataset.mode);
+    });
+  });
+
+  $('responseBtn').addEventListener('click', () => {
+    if ($('responseBtn').disabled) return;
+    sendResponse();
+  });
+
+  document.querySelectorAll('.course-btn').forEach((btn) => {
+    const side = btn.dataset.side;
+    const deg = Number(btn.dataset.deg);
+    btn.addEventListener('click', () => {
+      if (!S.connected) return;
+      if (S.pilot.engaged) {
+        sendCourse(side, deg);
+      }
+    });
+    if (deg === 10) {
+      btn.addEventListener('pointerdown', (event) => {
+        if (!S.connected || S.pilot.engaged || !canSend()) return;
+        event.preventDefault();
+        startNfu(side, btn);
+      });
+      btn.addEventListener('pointerup', () => stopNfu(true));
+      btn.addEventListener('pointerleave', () => stopNfu(true));
+      btn.addEventListener('pointercancel', () => stopNfu(true));
+    }
+  });
+
+  document.querySelectorAll('.tack-btn').forEach(bindTack);
+
+  $('settingsBtn').addEventListener('click', openSettings);
+  $('closeSettings').addEventListener('click', closeSettings);
+  $('cancelSettings').addEventListener('click', closeSettings);
+  $('saveSettings').addEventListener('click', saveSettings);
+  $('rebootBtn').addEventListener('click', rebootDevice);
+  $('settingsModal').addEventListener('click', (event) => {
+    if (event.target === $('settingsModal')) closeSettings();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeSettings();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopNfu(true);
+    } else {
+      refreshStatus();
+    }
+  });
+  window.addEventListener('pagehide', () => stopNfu(true));
+
+  document.addEventListener('gesturestart', (event) => event.preventDefault());
+  document.addEventListener('dblclick', (event) => event.preventDefault(), { passive: false });
+}
+
+/* ------------------------------------------------------------------ */
+/* Boot                                                               */
+/* ------------------------------------------------------------------ */
+initGauge();
+bindEvents();
+refreshStatus();
+S.pollTimer = setInterval(refreshStatus, 900);
+setInterval(() => {
+  if (!$('settingsModal').classList.contains('hidden')) {
+    updateDiagnostics();
+    loadLog();
+  }
+}, 2500);
+</script>
+</body>
+</html>
