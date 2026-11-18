@@ -341,6 +341,11 @@ Hay un subproyecto Android nativo en [`android/`](android/README.md)
 web, con brújula, modos Auto/Viento/Standby, correcciones, virada con pulsación
 larga, control directo del timón NFU, ajustes y diagnóstico.
 
+<img src="docs/screenshot-android.png" alt="Aplicación Android AC42 Pilot" width="380">
+
+Aplicación Android v0.2.0 en un teléfono, sin conexión y sin la placa: compás,
+timón y rumbo, piloto automático e instrumentos, con la barra de estado abajo.
+
 - Lenguaje: Kotlin + Jetpack Compose.
 - Conexión: API REST de la placa, HTTP local.
 - Dirección por defecto: `http://192.168.4.1`, modificable en la aplicación.

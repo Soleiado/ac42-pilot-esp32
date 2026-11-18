@@ -331,6 +331,11 @@ Il reprend l’interface et les commandes de la page web, avec un compas, les
 modes Auto/Vent/Standby, les corrections, le virement long, la barre directe
 NFU, les réglages et le diagnostic.
 
+<img src="docs/screenshot-android.png" alt="Application Android AC42 Pilot" width="380">
+
+Application Android v0.2.0 sur téléphone, hors ligne sans boîtier connecté :
+compas, barre & cap, pilote automatique et instruments, barre d’état en bas.
+
 - Langage : Kotlin + Jetpack Compose.
 - Connexion : API REST du boîtier, HTTP local.
 - Adresse par défaut : `http://192.168.4.1`, modifiable dans l’application.

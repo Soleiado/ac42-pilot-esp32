@@ -3,6 +3,13 @@
 Application native Android qui reprend les fonctions et la présentation de
 l’interface web embarquée du boîtier **Waveshare ESP32-S3-RS485-CAN**.
 
+## Aperçu
+
+<img src="../docs/screenshot-android.png" alt="Application Android AC42 Pilot" width="360">
+
+Capture réelle sur téléphone, hors ligne sans boîtier connecté : compas,
+barre & cap, pilote automatique et instruments, barre d’état en bas.
+
 ## Télécharger l’APK
 
 [**⬇ Télécharger l’APK Android v0.2.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.2.0-debug.apk)

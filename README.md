@@ -330,6 +330,11 @@ A native Android sub-project lives in [`android/`](android/README.md)
 with a compass, Auto/Wind/Standby modes, course changes, long-press tack,
 direct NFU rudder control, settings and diagnostics.
 
+<img src="docs/screenshot-android.png" alt="AC42 Pilot Android app" width="380">
+
+Android app v0.2.0 on a phone, offline without a connected board: compass,
+rudder & course, autopilot and instruments, with the status bar at the bottom.
+
 - Language: Kotlin + Jetpack Compose.
 - Connection: board REST API over local HTTP.
 - Default address: `http://192.168.4.1`, editable in the app.
