@@ -338,12 +338,12 @@ NFU, les réglages et le diagnostic.
 
 ### Télécharger l’APK
 
-[**⬇ Télécharger l’APK Android v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
+[**⬇ Télécharger l’APK Android v0.2.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.2.0-debug.apk)
 
 - APK signé avec la clé de développement Android, à installer manuellement
   (autoriser les sources inconnues), pas via le Play Store.
 - `minSdk 26`, `targetSdk 34`, environ 9,6 Mo.
-- SHA-256 : `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
+- SHA-256 : `BC210637C479DD39B6D413FCF36A8A8674C77A1DB08CA3052D89FF9D00D0F563`
 - Toutes les versions : [page Releases](https://github.com/Soleiado/ac42-pilot-esp32/releases).
 
 Le build local reste possible :

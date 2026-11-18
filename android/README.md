@@ -5,11 +5,11 @@ l’interface web embarquée du boîtier **Waveshare ESP32-S3-RS485-CAN**.
 
 ## Télécharger l’APK
 
-[**⬇ Télécharger l’APK Android v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
+[**⬇ Télécharger l’APK Android v0.2.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.2.0-debug.apk)
 
 - APK signé en debug, à installer manuellement (sources inconnues autorisées).
 - `minSdk 26`, `targetSdk 34`, environ 9,6 Mo.
-- SHA-256 : `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
+- SHA-256 : `BC210637C479DD39B6D413FCF36A8A8674C77A1DB08CA3052D89FF9D00D0F563`
 - Toutes les versions : [Releases](https://github.com/Soleiado/ac42-pilot-esp32/releases).
 
 Elle dialogue avec le firmware via la même API REST, sur le réseau local :
@@ -20,6 +20,9 @@ Elle dialogue avec le firmware via la même API REST, sur le réseau local :
 ## Fonctionnalités
 
 - Écran unique avec compas, cible, vent, barre et instruments.
+- Ordre des tuiles : **compas**, **barre & cap**, **pilote automatique**, puis
+  **instruments** ; la barre d’état et le bouton Réglages sont en bas.
+- Icône de l’application : barre à roue.
 - Modes **Standby**, **Auto**, **Vent**.
 - Corrections **±1° / ±10°**.
 - **Virement** par appui long de 2 s.

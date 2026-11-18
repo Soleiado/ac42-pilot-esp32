@@ -76,18 +76,6 @@ fun PilotScreen(
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Ac42TopBar(
-                    state = state,
-                    onSettings = {
-                        showSettings = true
-                        onLoadLog()
-                    },
-                )
-
-                if (state.status?.simulated == true) {
-                    BannerDemo()
-                }
-
                 banner?.let { AlertBanner(it) }
 
                 BoxWithConstraints(Modifier.fillMaxWidth()) {
@@ -98,38 +86,30 @@ fun PilotScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             GaugeCard(state, Modifier.weight(1.08f))
-                            PilotCard(
+                            ControlsCard(
                                 state = state,
                                 modifier = Modifier.weight(0.92f),
+                                onCourse = onCourse,
+                                onTack = onTack,
+                                onStartNfu = onStartNfu,
+                                onStopNfu = onStopNfu,
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            PilotCard(
+                                state = state,
+                                modifier = Modifier.weight(1.08f),
                                 onMode = onMode,
                                 onResponse = onResponse,
                             )
-                        }
-                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            ) {
-                                ControlsCard(
-                                    state = state,
-                                    modifier = Modifier.weight(1.08f),
-                                    onCourse = onCourse,
-                                    onTack = onTack,
-                                    onStartNfu = onStartNfu,
-                                    onStopNfu = onStopNfu,
-                                )
-                                InstrumentsCard(state, Modifier.weight(0.92f))
-                            }
+                            InstrumentsCard(state, Modifier.weight(0.92f))
                         }
                     } else {
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             GaugeCard(state, Modifier.fillMaxWidth())
-                            PilotCard(
-                                state = state,
-                                modifier = Modifier.fillMaxWidth(),
-                                onMode = onMode,
-                                onResponse = onResponse,
-                            )
                             ControlsCard(
                                 state = state,
                                 modifier = Modifier.fillMaxWidth(),
@@ -138,12 +118,30 @@ fun PilotScreen(
                                 onStartNfu = onStartNfu,
                                 onStopNfu = onStopNfu,
                             )
+                            PilotCard(
+                                state = state,
+                                modifier = Modifier.fillMaxWidth(),
+                                onMode = onMode,
+                                onResponse = onResponse,
+                            )
                             InstrumentsCard(state, Modifier.fillMaxWidth())
                         }
                     }
                 }
 
+                if (state.status?.simulated == true) {
+                    BannerDemo()
+                }
+
                 Ac42Footer(state)
+
+                Ac42TopBar(
+                    state = state,
+                    onSettings = {
+                        showSettings = true
+                        onLoadLog()
+                    },
+                )
             }
         }
     }

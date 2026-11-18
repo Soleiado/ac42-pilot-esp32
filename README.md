@@ -337,12 +337,12 @@ direct NFU rudder control, settings and diagnostics.
 
 ### Download the APK
 
-[**⬇ Download the Android APK v0.1.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.1.0-debug.apk)
+[**⬇ Download the Android APK v0.2.0 (debug)**](https://github.com/Soleiado/ac42-pilot-esp32/releases/latest/download/ac42-pilot-0.2.0-debug.apk)
 
 - APK signed with the Android debug key, to install manually (allow unknown
   sources), not through the Play Store.
 - `minSdk 26`, `targetSdk 34`, about 9.6 MB.
-- SHA-256: `DBEE949F710D2886A7F779C5211E927E7D0D46458BB0764230585AE8C0E65FCF`
+- SHA-256: `BC210637C479DD39B6D413FCF36A8A8674C77A1DB08CA3052D89FF9D00D0F563`
 - All versions: [Releases page](https://github.com/Soleiado/ac42-pilot-esp32/releases).
 
 A local build is still possible:
